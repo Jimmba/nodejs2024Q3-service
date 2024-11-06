@@ -16,13 +16,13 @@ export class UserDto implements IUser {
 
   @IsNumber()
   @IsDefined()
-  version: number; // integer number, increments on update
+  version: number;
 
   @IsNumber()
   @IsDefined()
-  createdAt: number; // timestamp of creation
+  createdAt: number;
 
   @IsNumber()
   @IsDefined()
-  updatedAt: number; // timestamp of last update
+  updatedAt: number;
 }
