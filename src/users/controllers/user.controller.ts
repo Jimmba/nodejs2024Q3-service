@@ -9,43 +9,42 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import {
-  CreateUserDto,
-  UpdatePasswordDto,
-  UserIdDto,
-  UserResponseDto,
-} from '../dtos';
+import { CreateUserDto, UpdatePasswordDto, UserIdDto } from '../dtos';
 import { UserService } from '../services';
+import { IUserResponse } from '../interfaces';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAllUses(): Promise<UserResponseDto[]> {
+  getAllUses(): Promise<IUserResponse[]> {
     return this.userService.getAllUsers();
   }
 
   @Get(':id')
-  getUserById(@Param() params: UserIdDto): Promise<UserResponseDto> {
+  getUserById(@Param() params: UserIdDto): Promise<IUserResponse> {
     const { id } = params;
     return this.userService.getUserById(id);
   }
 
   @Post()
-  createUser(@Body() createUser: CreateUserDto): Promise<UserResponseDto> {
+  createUser(@Body() createUser: CreateUserDto): Promise<IUserResponse> {
     return this.userService.createUser(createUser);
   }
 
   @Put(':id')
-  updatePassword(@Param() params: UserIdDto, @Body() body: UpdatePasswordDto) {
+  updatePassword(
+    @Param() params: UserIdDto,
+    @Body() body: UpdatePasswordDto,
+  ): Promise<IUserResponse> {
     const { id } = params;
     return this.userService.updatePassword(id, body);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUser(@Param() params: UserIdDto) {
+  deleteUser(@Param() params: UserIdDto): Promise<void> {
     const { id } = params;
     return this.userService.deleteUser(id);
   }

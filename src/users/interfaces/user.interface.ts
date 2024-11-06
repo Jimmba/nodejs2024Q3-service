@@ -1,8 +1,5 @@
-export interface IUser {
-  id: string;
-  login: string;
+import { IUserResponse } from './user-response.interface';
+
+export interface IUser extends IUserResponse {
   password: string;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
 }

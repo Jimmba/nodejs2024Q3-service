@@ -1,19 +1,19 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Database } from '../../databases';
-import { CreateUserDto, UpdatePasswordDto, UserResponseDto } from '../dtos';
+import { CreateUserDto, UpdatePasswordDto } from '../dtos';
 import { BadRequestException, NotFoundException } from '../../common';
-import { IUser } from '../interfaces';
+import { IUser, IUserResponse } from '../interfaces';
 
 @Injectable()
 export class UserService {
   constructor(private readonly database: Database) {}
 
-  private filteredUser(user: IUser): UserResponseDto {
+  private filteredUser(user: IUser): IUserResponse {
     const { password, ...rest } = user;
     return { ...rest };
   }
 
-  public async getAllUsers(): Promise<UserResponseDto[]> {
+  public async getAllUsers(): Promise<IUserResponse[]> {
     const users = await this.database.getUsers();
     return users.map(this.filteredUser);
   }
@@ -25,12 +25,12 @@ export class UserService {
     return user;
   }
 
-  public async getUserById(id: string): Promise<UserResponseDto> {
+  public async getUserById(id: string): Promise<IUserResponse> {
     const user = await this.getFullUserById(id);
     return this.filteredUser(user);
   }
 
-  public async createUser(createUser: CreateUserDto): Promise<UserResponseDto> {
+  public async createUser(createUser: CreateUserDto): Promise<IUserResponse> {
     const { login } = createUser;
     const savedUser = await this.database.getUserByLogin(login);
     if (savedUser)
@@ -43,7 +43,7 @@ export class UserService {
   public async updatePassword(
     id: string,
     body: UpdatePasswordDto,
-  ): Promise<UserResponseDto> {
+  ): Promise<IUserResponse> {
     const savedUser = await this.getFullUserById(id);
     const { password: savedPassword } = savedUser;
     const { oldPassword, newPassword } = body;

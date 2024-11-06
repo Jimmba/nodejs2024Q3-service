@@ -1,11 +1,11 @@
-import { generateUuid } from 'src/common';
-import { CreateUserDto, IUser } from '../../users';
-import { promisify } from '../helpers';
+import { generateUuid } from '../../common';
+import { CreateUserDto } from '../../users/dtos';
+import { IUser } from '../../users/interfaces';
 export class UserEntity {
   private readonly users: IUser[] = [];
 
   public async getUsers(): Promise<IUser[]> {
-    return promisify(this.users);
+    return this.users;
   }
 
   public async getUserById(id: string): Promise<IUser> {
@@ -14,7 +14,7 @@ export class UserEntity {
       return id === userId;
     });
     if (!user) return null;
-    return promisify(user);
+    return user;
   }
 
   public async getUserByLogin(login: string): Promise<IUser> {
@@ -23,7 +23,7 @@ export class UserEntity {
       return login === userLogin;
     });
     if (!user) return null;
-    return promisify(user);
+    return user;
   }
 
   public async createUser(createUser: CreateUserDto): Promise<IUser> {
@@ -37,7 +37,7 @@ export class UserEntity {
       updatedAt: new Date().getTime(),
     };
     this.users.push(user);
-    return promisify(user);
+    return user;
   }
 
   public async updatePassword(id: string, newPassword: string): Promise<IUser> {
@@ -47,7 +47,7 @@ export class UserEntity {
     user.version += 1;
     user.updatedAt = new Date().getTime();
     const updatedUser = await this.getUserById(id);
-    return promisify(updatedUser);
+    return updatedUser;
   }
 
   public async deleteUser(id: string): Promise<void> {
