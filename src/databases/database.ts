@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ArtistEntity, UserEntity } from './entities';
-import { IArtist } from '../artists/interfaces';
-import { CreateArtistDto } from '../artists/dtos';
-import { IUser } from '../users/interfaces';
-import { CreateUserDto } from '../users/dtos';
+import { IArtist } from '../modules/artists/interfaces';
+import { CreateArtistDto } from '../modules/artists/dtos';
+import { IUser } from '../modules/users/interfaces';
+import { CreateUserDto } from '../modules/users/dtos';
 
 @Injectable()
 export class Database {

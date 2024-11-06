@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Database } from '../../databases';
+import { Database } from '../../../databases';
 import { CreateUserDto, UpdatePasswordDto } from '../dtos';
-import { BadRequestException, NotFoundException } from '../../common';
+import { BadRequestException, NotFoundException } from '../../../common';
 import { IUser, IUserResponse } from '../interfaces';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { generateUuid } from '../../common';
-import { CreateUserDto } from '../../users/dtos';
-import { IUser } from '../../users/interfaces';
+import { CreateUserDto } from '../../modules/users/dtos';
+import { IUser } from '../../modules/users/interfaces';
 export class UserEntity {
   private readonly users: IUser[] = [];
 

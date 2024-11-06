@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Database } from './databases';
-import { UserModule } from './users';
-import { ArtistModule } from './artists';
+import { ArtistModule, UserModule } from './modules';
 
 @Module({
   imports: [UserModule, ArtistModule],

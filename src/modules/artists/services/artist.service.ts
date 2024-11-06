@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { Database } from '../../databases';
+import { Injectable } from '@nestjs/common';
+import { Database } from '../../../databases';
 import { IArtist } from '../interfaces';
 import { CreateArtistDto } from '../dtos';
-import { NotFoundException } from '../../common';
+import { NotFoundException } from '../../../common';
 
 @Injectable()
 export class ArtistService {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ArtistController } from './controllers';
-import { Database } from '../databases';
+import { Database } from '../../databases';
 import { ArtistService } from './services';
 
 @Module({

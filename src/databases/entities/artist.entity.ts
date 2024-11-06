@@ -1,5 +1,5 @@
-import { CreateArtistDto } from '../../artists/dtos';
-import { IArtist } from '../../artists/interfaces';
+import { CreateArtistDto } from '../../modules/artists/dtos';
+import { IArtist } from '../../modules/artists/interfaces';
 import { generateUuid } from '../../common';
 
 export class ArtistEntity {
