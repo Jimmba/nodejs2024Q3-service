@@ -43,7 +43,7 @@ export class AlbumEntity {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
 
     const { name, year, artistId } = updateAlbum;
-    const album = this.albums[albumIndex]; //! refactor?
+    const album = this.albums[albumIndex];
     album.name = name;
     album.year = year;
     album.artistId = artistId;

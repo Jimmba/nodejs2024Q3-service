@@ -1,5 +1,5 @@
-export interface IArtist {
+import { ICreateArtist } from './create-artist.interface';
+
+export interface IArtist extends ICreateArtist {
   id: string;
-  name: string;
-  grammy: boolean;
 }

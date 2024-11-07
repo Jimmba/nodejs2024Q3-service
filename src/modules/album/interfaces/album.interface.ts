@@ -1,6 +1,5 @@
-export interface IAlbum {
+import { ICreateAlbum } from './create-album.interface';
+
+export interface IAlbum extends ICreateAlbum {
   id: string;
-  name: string;
-  year: number;
-  artistId: string | null;
 }

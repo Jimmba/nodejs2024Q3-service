@@ -35,7 +35,6 @@ export class AlbumService {
   }
 
   public async updateAlbum(
-    //! createOrUpdate method?
     id: string,
     updateAlbum: CreateAlbumDto,
   ): Promise<IAlbum> {
