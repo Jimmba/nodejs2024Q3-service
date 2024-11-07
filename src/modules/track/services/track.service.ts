@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { NotFoundException } from '../../../common/exceptions';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../../common/exceptions';
 import { DatabaseService } from '../../../databases';
 import { CreateTrackDto } from '../dtos';
 import { ITrack } from '../interfaces';
@@ -21,8 +24,12 @@ export class TrackService {
 
   private async validateIds(body: CreateTrackDto) {
     const { albumId, artistId } = body;
-    await this.database.validateAlbum(albumId);
-    await this.database.validateArtist(artistId);
+    const album = await this.database.validateAlbum(albumId);
+    const artist = await this.database.validateArtist(artistId);
+    if (album && artist && album.artistId !== artist.id)
+      throw new BadRequestException(
+        `Passed album id does not belong to passed artist`,
+      );
   }
 
   public async createTrack(createTrack: CreateTrackDto): Promise<ITrack> {
@@ -31,7 +38,6 @@ export class TrackService {
   }
 
   public async updateTrack(
-    //! createOrUpdate method?
     id: string,
     updateTrack: CreateTrackDto,
   ): Promise<ITrack> {

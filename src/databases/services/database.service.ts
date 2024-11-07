@@ -61,12 +61,13 @@ export class DatabaseService {
     return this.users.deleteUser(id);
   }
 
-  public async validateArtist(artistId: string | null): Promise<void> {
+  public async validateArtist(artistId: string | null): Promise<IArtist> {
     if (artistId === null) return;
     const artist = await this.getArtistById(artistId);
     if (!artist) {
       throw new BadRequestException(`Artist '${artistId}' does not exist`);
     }
+    return artist;
   }
 
   public async getArtists(): Promise<IArtist[]> {
@@ -97,12 +98,13 @@ export class DatabaseService {
     return this.artists.deleteArtist(id);
   }
 
-  public async validateAlbum(albumId: string | null): Promise<void> {
+  public async validateAlbum(albumId: string | null): Promise<IAlbum> {
     if (albumId === null) return;
     const album = await this.getAlbumById(albumId);
     if (!album) {
       throw new BadRequestException(`Album '${albumId}' does not exist`);
     }
+    return album;
   }
 
   public async getAlbums(): Promise<IAlbum[]> {
