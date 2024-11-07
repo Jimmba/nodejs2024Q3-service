@@ -1,25 +1,34 @@
 import { Injectable } from '@nestjs/common';
 
-import { ArtistEntity, AlbumEntity, UserEntity } from '../entities';
+import {
+  ArtistEntity,
+  AlbumEntity,
+  UserEntity,
+  TrackEntity,
+} from '../entities';
 
 import { CreateAlbumDto } from '../../modules/album/dtos';
 import { CreateArtistDto } from '../../modules/artists/dtos';
+import { CreateTrackDto } from '../../modules/track/dtos';
 import { CreateUserDto } from '../../modules/users/dtos';
 
 import { IAlbum } from '../../modules/album/interfaces';
 import { IArtist } from '../../modules/artists/interfaces';
+import { ITrack } from '../../modules/track/interfaces';
 import { IUser } from '../../modules/users/interfaces';
 
 @Injectable()
 export class DatabaseService {
-  private readonly users: UserEntity;
-  private readonly artists: ArtistEntity;
   private readonly albums: AlbumEntity;
+  private readonly artists: ArtistEntity;
+  private readonly tracks: TrackEntity;
+  private readonly users: UserEntity;
 
   constructor() {
-    this.users = new UserEntity();
-    this.artists = new ArtistEntity();
     this.albums = new AlbumEntity();
+    this.artists = new ArtistEntity();
+    this.tracks = new TrackEntity();
+    this.users = new UserEntity();
   }
 
   public async getUsers(): Promise<IUser[]> {
@@ -67,6 +76,7 @@ export class DatabaseService {
 
   public async deleteArtist(id: string): Promise<void> {
     await this.albums.removeArtistsAlbums(id);
+    await this.tracks.removeArtistsTracks(id);
     return this.artists.deleteArtist(id);
   }
 
@@ -90,6 +100,30 @@ export class DatabaseService {
   }
 
   public async deleteAlbum(id: string): Promise<void> {
+    await this.tracks.removeAlbumsTracks(id);
     return this.albums.deleteAlbum(id);
+  }
+
+  public async getTracks(): Promise<ITrack[]> {
+    return this.tracks.getTracks();
+  }
+
+  public async getTrackById(id: string): Promise<ITrack> {
+    return this.tracks.getTrackById(id);
+  }
+
+  public async createTrack(createTrack: CreateTrackDto): Promise<ITrack> {
+    return this.tracks.createTrack(createTrack);
+  }
+
+  public async updateTrack(
+    id: string,
+    updateTrack: CreateTrackDto,
+  ): Promise<ITrack> {
+    return this.tracks.updateTrack(id, updateTrack);
+  }
+
+  public async deleteTrack(id: string): Promise<void> {
+    return this.tracks.deleteTrack(id);
   }
 }
