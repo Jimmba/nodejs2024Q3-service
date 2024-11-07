@@ -1,4 +1,4 @@
-import { generateUuid } from '../../common';
+import { generateUuid } from '../../common/helpers';
 
 import { CreateUserDto } from '../../modules/users/dtos';
 import { IUser } from '../../modules/users/interfaces';
@@ -43,12 +43,18 @@ export class UserEntity {
 
   public async updatePassword(id: string, newPassword: string): Promise<IUser> {
     const userIndex = this.users.findIndex((user) => user.id === id);
-    const user = this.users[userIndex];
-    user.password = newPassword;
-    user.version += 1;
-    user.updatedAt = new Date().getTime();
-    const updatedUser = await this.getUserById(id);
-    return updatedUser;
+    const { login, version, createdAt } = this.users[userIndex];
+
+    const user: IUser = {
+      id,
+      login,
+      password: newPassword,
+      version: version + 1,
+      createdAt,
+      updatedAt: new Date().getTime(),
+    };
+    this.users[userIndex] = user;
+    return user;
   }
 
   public async deleteUser(id: string): Promise<void> {

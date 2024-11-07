@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { BadRequestException } from '../../common/exceptions';
+
 import {
   ArtistEntity,
   AlbumEntity,
@@ -55,6 +57,14 @@ export class DatabaseService {
     return this.users.deleteUser(id);
   }
 
+  public async validateArtist(artistId: string | null): Promise<void> {
+    if (artistId === null) return;
+    const artist = await this.getArtistById(artistId);
+    if (!artist) {
+      throw new BadRequestException(`Artist '${artistId}' does not exist`);
+    }
+  }
+
   public async getArtists(): Promise<IArtist[]> {
     return this.artists.getArtists();
   }
@@ -78,6 +88,14 @@ export class DatabaseService {
     await this.albums.removeArtistsAlbums(id);
     await this.tracks.removeArtistsTracks(id);
     return this.artists.deleteArtist(id);
+  }
+
+  public async validateAlbum(albumId: string | null): Promise<void> {
+    if (albumId === null) return;
+    const album = await this.getAlbumById(albumId);
+    if (!album) {
+      throw new BadRequestException(`Album '${albumId}' does not exist`);
+    }
   }
 
   public async getAlbums(): Promise<IAlbum[]> {

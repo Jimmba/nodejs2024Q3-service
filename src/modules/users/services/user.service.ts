@@ -1,6 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
-import { BadRequestException, NotFoundException } from '../../../common';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../../common/exceptions';
 import { DatabaseService } from '../../../databases';
 
 import { CreateUserDto, UpdatePasswordDto } from '../dtos';

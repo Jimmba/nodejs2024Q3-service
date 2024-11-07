@@ -1,4 +1,4 @@
-import { generateUuid } from '../../common';
+import { generateUuid } from '../../common/helpers';
 
 import { CreateTrackDto } from '../../modules/track/dtos';
 import { ITrack } from '../../modules/track/interfaces';
@@ -50,15 +50,12 @@ export class TrackEntity {
     updateTrack: CreateTrackDto,
   ): Promise<ITrack> {
     const trackIndex = this.tracks.findIndex((track) => track.id === id);
-
-    const { name, artistId, albumId, duration } = updateTrack;
-    const track = this.tracks[trackIndex]; //! refactor?
-    track.name = name;
-    track.artistId = artistId;
-    track.albumId = albumId;
-    track.duration = duration;
-    const updatedTrack = await this.getTrackById(id);
-    return updatedTrack;
+    const track: ITrack = {
+      id,
+      ...updateTrack,
+    };
+    this.tracks[trackIndex] = track;
+    return track;
   }
 
   public async deleteTrack(id: string): Promise<void> {

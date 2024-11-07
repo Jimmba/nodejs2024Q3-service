@@ -1,4 +1,4 @@
-import { generateUuid } from '../../common';
+import { generateUuid } from '../../common/helpers';
 
 import { CreateAlbumDto } from '../../modules/album/dtos';
 import { IAlbum } from '../../modules/album/interfaces';
@@ -41,14 +41,12 @@ export class AlbumEntity {
     updateAlbum: CreateAlbumDto,
   ): Promise<IAlbum> {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
-
-    const { name, year, artistId } = updateAlbum;
-    const album = this.albums[albumIndex];
-    album.name = name;
-    album.year = year;
-    album.artistId = artistId;
-    const updatedAlbum = await this.getAlbumById(id);
-    return updatedAlbum;
+    const album: IAlbum = {
+      id,
+      ...updateAlbum,
+    };
+    this.albums[albumIndex] = album;
+    return album;
   }
 
   public async deleteAlbum(id: string): Promise<void> {

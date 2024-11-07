@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BadRequestException, NotFoundException } from '../../../common';
+import { NotFoundException } from '../../../common/exceptions';
 import { DatabaseService } from '../../../databases';
 
 import { CreateAlbumDto } from '../dtos';
@@ -22,11 +22,7 @@ export class AlbumService {
 
   private async validateArtist(body: CreateAlbumDto) {
     const { artistId } = body;
-    if (artistId !== null) {
-      const artist = await this.database.getArtistById(artistId);
-      if (!artist)
-        throw new BadRequestException(`Artist '${artistId}' not exists`);
-    }
+    await this.database.validateArtist(artistId);
   }
 
   public async createAlbum(createAlbum: CreateAlbumDto): Promise<IAlbum> {

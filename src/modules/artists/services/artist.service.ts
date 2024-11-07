@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { NotFoundException } from '../../../common';
+import { NotFoundException } from '../../../common/exceptions';
 import { DatabaseService } from '../../../databases';
 
 import { CreateArtistDto } from '../dtos';

@@ -6,6 +6,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
+import { IsUUIDOrNull } from '../../../common/decorators';
 import { ITrack } from '../interfaces';
 
 export class TrackDto implements ITrack {
@@ -17,13 +18,11 @@ export class TrackDto implements ITrack {
   @IsDefined()
   name: string;
 
-  @IsString()
-  @IsOptional()
-  artistId: string;
+  @IsUUIDOrNull()
+  artistId: string | null;
 
-  @IsString()
-  @IsOptional()
-  albumId: string;
+  @IsUUIDOrNull()
+  albumId: string | null;
 
   @IsNumber()
   @IsDefined()

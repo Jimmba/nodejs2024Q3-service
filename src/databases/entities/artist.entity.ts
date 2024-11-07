@@ -1,4 +1,4 @@
-import { generateUuid } from '../../common';
+import { generateUuid } from '../../common/helpers';
 
 import { CreateArtistDto } from '../../modules/artists/dtos';
 import { IArtist } from '../../modules/artists/interfaces';
@@ -33,13 +33,12 @@ export class ArtistEntity {
     updateArtist: CreateArtistDto,
   ): Promise<IArtist> {
     const artistIndex = this.artists.findIndex((artist) => artist.id === id);
-
-    const { grammy, name } = updateArtist;
-    const artist = this.artists[artistIndex];
-    artist.grammy = grammy;
-    artist.name = name;
-    const updatedArtist = await this.getArtistById(id);
-    return updatedArtist;
+    const artist: IArtist = {
+      id,
+      ...updateArtist,
+    };
+    this.artists[artistIndex] = artist;
+    return artist;
   }
 
   public async deleteArtist(id: string): Promise<void> {

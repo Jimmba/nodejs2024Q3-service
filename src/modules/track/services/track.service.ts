@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BadRequestException, NotFoundException } from '../../../common';
+import { NotFoundException } from '../../../common/exceptions';
 import { DatabaseService } from '../../../databases';
 import { CreateTrackDto } from '../dtos';
 import { ITrack } from '../interfaces';
@@ -20,21 +20,9 @@ export class TrackService {
   }
 
   private async validateIds(body: CreateTrackDto) {
-    const { artistId, albumId } = body;
-
-    if (artistId !== null) {
-      //! refactor duplicate code (this.database.validateArtist)
-      const artist = await this.database.getArtistById(artistId);
-      if (!artist)
-        throw new BadRequestException(`Artist '${artistId}' not exists`);
-    }
-
-    if (albumId !== null) {
-      //! refactor duplicate code (this.database.validateAlbum)
-      const album = await this.database.getAlbumById(albumId);
-      if (!album)
-        throw new BadRequestException(`Album '${albumId}' not exists`);
-    }
+    const { albumId, artistId } = body;
+    await this.database.validateAlbum(albumId);
+    await this.database.validateArtist(artistId);
   }
 
   public async createTrack(createTrack: CreateTrackDto): Promise<ITrack> {

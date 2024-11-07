@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 
-import { AllExceptionsFilter } from './common';
+import { AllExceptionsFilter } from './common/exceptions';
 import { AppModule } from './app.module';
 
 async function bootstrap() {

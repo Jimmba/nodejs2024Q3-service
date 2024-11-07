@@ -1,10 +1,6 @@
-import {
-  IsDefined,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsDefined, IsNumber, IsString, IsUUID } from 'class-validator';
+
+import { IsUUIDOrNull } from '../../../common/decorators';
 import { IAlbum } from '../interfaces';
 
 export class AlbumDto implements IAlbum {
@@ -20,7 +16,6 @@ export class AlbumDto implements IAlbum {
   @IsDefined()
   year: number;
 
-  @IsString()
-  @IsOptional()
+  @IsUUIDOrNull()
   artistId: string | null;
 }
