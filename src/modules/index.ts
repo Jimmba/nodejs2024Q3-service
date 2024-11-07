@@ -1,4 +1,5 @@
 export * from './album';
 export * from './artists';
-export * from './users';
+export * from './favorites';
 export * from './track';
+export * from './users';

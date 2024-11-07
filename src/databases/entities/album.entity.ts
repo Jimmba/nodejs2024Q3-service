@@ -51,6 +51,6 @@ export class AlbumEntity {
 
   public async deleteAlbum(id: string): Promise<void> {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
-    this.albums.splice(albumIndex);
+    this.albums.splice(albumIndex, 1);
   }
 }

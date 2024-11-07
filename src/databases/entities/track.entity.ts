@@ -60,6 +60,6 @@ export class TrackEntity {
 
   public async deleteTrack(id: string): Promise<void> {
     const trackIndex = this.tracks.findIndex((track) => track.id === id);
-    this.tracks.splice(trackIndex);
+    this.tracks.splice(trackIndex, 1);
   }
 }

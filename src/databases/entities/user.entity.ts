@@ -59,6 +59,6 @@ export class UserEntity {
 
   public async deleteUser(id: string): Promise<void> {
     const userIndex = this.users.findIndex((user) => user.id === id);
-    this.users.splice(userIndex);
+    this.users.splice(userIndex, 1);
   }
 }

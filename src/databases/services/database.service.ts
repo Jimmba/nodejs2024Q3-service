@@ -7,6 +7,7 @@ import {
   AlbumEntity,
   UserEntity,
   TrackEntity,
+  FavoriteEntity,
 } from '../entities';
 
 import { CreateAlbumDto } from '../../modules/album/dtos';
@@ -16,6 +17,7 @@ import { CreateUserDto } from '../../modules/users/dtos';
 
 import { IAlbum } from '../../modules/album/interfaces';
 import { IArtist } from '../../modules/artists/interfaces';
+import { IFavorites } from '../../modules/favorites/interfaces';
 import { ITrack } from '../../modules/track/interfaces';
 import { IUser } from '../../modules/users/interfaces';
 
@@ -23,12 +25,14 @@ import { IUser } from '../../modules/users/interfaces';
 export class DatabaseService {
   private readonly albums: AlbumEntity;
   private readonly artists: ArtistEntity;
+  private readonly favorites: FavoriteEntity;
   private readonly tracks: TrackEntity;
   private readonly users: UserEntity;
 
   constructor() {
     this.albums = new AlbumEntity();
     this.artists = new ArtistEntity();
+    this.favorites = new FavoriteEntity();
     this.tracks = new TrackEntity();
     this.users = new UserEntity();
   }
@@ -85,8 +89,11 @@ export class DatabaseService {
   }
 
   public async deleteArtist(id: string): Promise<void> {
-    await this.albums.removeArtistsAlbums(id);
-    await this.tracks.removeArtistsTracks(id);
+    await Promise.all([
+      this.tracks.removeArtistsTracks(id),
+      this.albums.removeArtistsAlbums(id),
+      this.favorites.deleteArtistFromFavorites(id),
+    ]);
     return this.artists.deleteArtist(id);
   }
 
@@ -118,7 +125,10 @@ export class DatabaseService {
   }
 
   public async deleteAlbum(id: string): Promise<void> {
-    await this.tracks.removeAlbumsTracks(id);
+    await Promise.all([
+      this.tracks.removeAlbumsTracks(id),
+      this.favorites.deleteAlbumFromFavorites(id),
+    ]);
     return this.albums.deleteAlbum(id);
   }
 
@@ -142,6 +152,47 @@ export class DatabaseService {
   }
 
   public async deleteTrack(id: string): Promise<void> {
+    await this.favorites.deleteTrackFromFavorites(id);
     return this.tracks.deleteTrack(id);
+  }
+
+  public async getAllFavorites(): Promise<IFavorites> {
+    return this.favorites.getAllFavorites();
+  }
+
+  async addAlbumToFavorites(album: IAlbum): Promise<void> {
+    return this.favorites.addAlbumToFavorites(album);
+  }
+
+  async albumIsExistInFavorites(id: string): Promise<boolean> {
+    return this.favorites.albumIsExistInFavorites(id);
+  }
+
+  async deleteAlbumFromFavorites(id: string): Promise<void> {
+    return this.favorites.deleteAlbumFromFavorites(id);
+  }
+
+  async addArtistToFavorites(artist: IArtist): Promise<void> {
+    return this.favorites.addArtistToFavorites(artist);
+  }
+
+  async artistIsExistInFavorites(id: string): Promise<boolean> {
+    return this.favorites.artistIsExistInFavorites(id);
+  }
+
+  async deleteArtistFromFavorites(id: string): Promise<void> {
+    return this.favorites.deleteArtistFromFavorites(id);
+  }
+
+  async addTrackToFavorites(track: ITrack): Promise<void> {
+    return this.favorites.addTrackToFavorites(track);
+  }
+
+  async trackIsExistInFavorites(id: string): Promise<boolean> {
+    return this.favorites.trackIsExistInFavorites(id);
+  }
+
+  async deleteTrackFromFavorites(id: string): Promise<void> {
+    return this.favorites.deleteTrackFromFavorites(id);
   }
 }

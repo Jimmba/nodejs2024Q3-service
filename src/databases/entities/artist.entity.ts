@@ -43,6 +43,6 @@ export class ArtistEntity {
 
   public async deleteArtist(id: string): Promise<void> {
     const artistIndex = this.artists.findIndex((artist) => artist.id === id);
-    this.artists.splice(artistIndex);
+    this.artists.splice(artistIndex, 1);
   }
 }

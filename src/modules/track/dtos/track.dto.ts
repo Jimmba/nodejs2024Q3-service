@@ -1,10 +1,4 @@
-import {
-  IsDefined,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsDefined, IsNumber, IsString, IsUUID } from 'class-validator';
 
 import { IsUUIDOrNull } from '../../../common/decorators';
 import { ITrack } from '../interfaces';
