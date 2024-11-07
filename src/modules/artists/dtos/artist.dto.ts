@@ -1,4 +1,5 @@
 import { IsBoolean, IsDefined, IsString, IsUUID } from 'class-validator';
+
 import { IArtist } from '../interfaces';
 
 export class ArtistDto implements IArtist {

@@ -2,8 +2,9 @@ import {
   BadRequestException as _BadRequestException,
   HttpStatus,
 } from '@nestjs/common';
-import { IException } from '../interfaces';
+
 import { ERROR_MESSAGES } from '../constants';
+import { IException } from '../interfaces';
 
 export class BadRequestException extends _BadRequestException {
   constructor(message?: string) {

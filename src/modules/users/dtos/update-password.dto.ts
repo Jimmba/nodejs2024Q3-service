@@ -1,4 +1,5 @@
 import { IsDefined, IsString } from 'class-validator';
+
 import { IUpdatePassword } from '../interfaces';
 export class UpdatePasswordDto implements IUpdatePassword {
   @IsString()

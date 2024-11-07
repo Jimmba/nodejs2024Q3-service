@@ -1,12 +1,14 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Database } from '../../../databases';
-import { CreateUserDto, UpdatePasswordDto } from '../dtos';
+
 import { BadRequestException, NotFoundException } from '../../../common';
+import { DatabaseService } from '../../../databases';
+
+import { CreateUserDto, UpdatePasswordDto } from '../dtos';
 import { IUser, IUserResponse } from '../interfaces';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly database: Database) {}
+  constructor(private readonly database: DatabaseService) {}
 
   private filteredUser(user: IUser): IUserResponse {
     const { password, ...rest } = user;

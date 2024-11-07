@@ -9,9 +9,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ArtistService } from '../services';
+
 import { ArtistIdDto, CreateArtistDto } from '../dtos';
 import { IArtist } from '../interfaces';
+import { ArtistService } from '../services';
 
 @Controller('artist')
 export class ArtistController {

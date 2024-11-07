@@ -9,9 +9,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+
 import { CreateUserDto, UpdatePasswordDto, UserIdDto } from '../dtos';
-import { UserService } from '../services';
 import { IUserResponse } from '../interfaces';
+import { UserService } from '../services';
 
 @Controller('user')
 export class UserController {

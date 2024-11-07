@@ -1,4 +1,5 @@
 import { generateUuid } from '../../common';
+
 import { CreateUserDto } from '../../modules/users/dtos';
 import { IUser } from '../../modules/users/interfaces';
 export class UserEntity {

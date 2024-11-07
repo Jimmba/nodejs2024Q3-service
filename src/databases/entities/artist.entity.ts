@@ -1,6 +1,7 @@
+import { generateUuid } from '../../common';
+
 import { CreateArtistDto } from '../../modules/artists/dtos';
 import { IArtist } from '../../modules/artists/interfaces';
-import { generateUuid } from '../../common';
 
 export class ArtistEntity {
   private readonly artists: IArtist[] = [];

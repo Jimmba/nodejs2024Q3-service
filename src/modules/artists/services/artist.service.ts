@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Database } from '../../../databases';
-import { IArtist } from '../interfaces';
-import { CreateArtistDto } from '../dtos';
+
 import { NotFoundException } from '../../../common';
+import { DatabaseService } from '../../../databases';
+
+import { CreateArtistDto } from '../dtos';
+import { IArtist } from '../interfaces';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly database: Database) {}
+  constructor(private readonly database: DatabaseService) {}
 
   public async getArtists(): Promise<IArtist[]> {
     return this.database.getArtists();

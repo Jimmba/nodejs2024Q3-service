@@ -2,8 +2,9 @@ import {
   HttpStatus,
   InternalServerErrorException as _InternalServerErrorException,
 } from '@nestjs/common';
-import { IException } from '../interfaces';
+
 import { ERROR_MESSAGES } from '../constants';
+import { IException } from '../interfaces';
 
 export class InternalServerErrorException extends _InternalServerErrorException {
   constructor() {

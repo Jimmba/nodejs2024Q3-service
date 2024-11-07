@@ -1,4 +1,5 @@
 import { IsDefined, IsNumber, IsString, IsUUID } from 'class-validator';
+
 import { IUser } from '../interfaces';
 
 export class UserDto implements IUser {
