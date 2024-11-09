@@ -11,6 +11,7 @@ export class UnprocessableEntityException extends _UnprocessableEntityException 
     const error: IException = {
       statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       message: message || ERROR_MESSAGES.UNPROCESSABLE_ENTITY,
+      error: ERROR_MESSAGES.UNPROCESSABLE_ENTITY,
     };
     super(error);
   }

@@ -11,6 +11,7 @@ export class ForbiddenException extends _ForbiddenException {
     const error: IException = {
       statusCode: HttpStatus.FORBIDDEN,
       message: message || ERROR_MESSAGES.FORBIDDEN,
+      error: ERROR_MESSAGES.FORBIDDEN,
     };
     super(error);
   }

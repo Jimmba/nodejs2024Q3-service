@@ -86,6 +86,7 @@ export class DatabaseService {
     id: string,
     updateArtist: CreateArtistDto,
   ): Promise<IArtist> {
+    await this.favorites.updateArtist(id, updateArtist);
     return this.artists.updateArtist(id, updateArtist);
   }
 
@@ -123,6 +124,7 @@ export class DatabaseService {
     id: string,
     updateAlbum: CreateAlbumDto,
   ): Promise<IAlbum> {
+    await this.favorites.updateAlbum(id, updateAlbum);
     return this.albums.updateAlbum(id, updateAlbum);
   }
 
@@ -150,6 +152,7 @@ export class DatabaseService {
     id: string,
     updateTrack: CreateTrackDto,
   ): Promise<ITrack> {
+    await this.favorites.updateTrack(id, updateTrack);
     return this.tracks.updateTrack(id, updateTrack);
   }
 

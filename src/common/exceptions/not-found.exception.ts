@@ -11,6 +11,7 @@ export class NotFoundException extends _NotFoundException {
     const error: IException = {
       statusCode: HttpStatus.NOT_FOUND,
       message: message || ERROR_MESSAGES.NOT_FOUND,
+      error: ERROR_MESSAGES.NOT_FOUND,
     };
     super(error);
   }

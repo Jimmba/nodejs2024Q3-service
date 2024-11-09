@@ -1,7 +1,11 @@
-import { IAlbum } from 'src/modules/album/interfaces';
-import { IArtist } from 'src/modules/artists/interfaces';
-import { IFavorites } from 'src/modules/favorites/interfaces';
-import { ITrack } from 'src/modules/track/interfaces';
+import { CreateAlbumDto } from '../../modules/album/dtos';
+import { CreateArtistDto } from '../../modules/artists/dtos';
+import { CreateTrackDto } from '../../modules/track/dtos';
+
+import { IAlbum } from '../../modules/album/interfaces';
+import { IArtist } from '../../modules/artists/interfaces';
+import { IFavorites } from '../../modules/favorites/interfaces';
+import { ITrack } from '../../modules/track/interfaces';
 
 export class FavoriteEntity {
   private readonly albums: IAlbum[] = [];
@@ -27,6 +31,15 @@ export class FavoriteEntity {
     return albumIndex !== -1;
   }
 
+  async updateAlbum(id: string, updateAlbum: CreateAlbumDto): Promise<void> {
+    const albumIndex = this.albums.findIndex((album) => album.id === id);
+    const album = {
+      id,
+      ...updateAlbum,
+    };
+    this.albums[albumIndex] = album;
+  }
+
   async deleteAlbumFromFavorites(id: string): Promise<void> {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
     this.albums.splice(albumIndex, 1);
@@ -44,6 +57,15 @@ export class FavoriteEntity {
     return artistIndex !== -1;
   }
 
+  async updateArtist(id: string, updateArtist: CreateArtistDto): Promise<void> {
+    const artistIndex = this.artists.findIndex((artist) => artist.id === id);
+    const artist = {
+      id,
+      ...updateArtist,
+    };
+    this.artists[artistIndex] = artist;
+  }
+
   async deleteArtistFromFavorites(id: string): Promise<void> {
     const artistIndex = this.artists.findIndex((artist) => artist.id === id);
     this.artists.splice(artistIndex, 1);
@@ -59,6 +81,15 @@ export class FavoriteEntity {
   async trackIsExistInFavorites(id: string): Promise<boolean> {
     const trackIndex = this.tracks.findIndex((track) => track.id === id);
     return trackIndex !== -1;
+  }
+
+  async updateTrack(id: string, updateTrack: CreateTrackDto): Promise<void> {
+    const trackIndex = this.tracks.findIndex((track) => track.id === id);
+    const track = {
+      id,
+      ...updateTrack,
+    };
+    this.tracks[trackIndex] = track;
   }
 
   async deleteTrackFromFavorites(id: string): Promise<void> {

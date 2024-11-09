@@ -11,6 +11,7 @@ export class BadRequestException extends _BadRequestException {
     const error: IException = {
       statusCode: HttpStatus.BAD_REQUEST,
       message: message || ERROR_MESSAGES.BAD_REQUEST,
+      error: ERROR_MESSAGES.BAD_REQUEST,
     };
     super(error);
   }
