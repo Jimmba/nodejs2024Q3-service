@@ -15,6 +15,7 @@ import {
 } from './modules';
 
 import { UserEntity } from './modules/users/entities';
+import { ArtistEntity } from './modules/artists/entities';
 
 config();
 
@@ -37,7 +38,7 @@ const host = IS_DEV ? 'localhost' : 'postgres';
       username,
       password,
       database,
-      entities: [UserEntity],
+      entities: [ArtistEntity, UserEntity],
       synchronize: true, //! remove?
     }),
     AlbumModule,
