@@ -24,5 +24,6 @@ async function bootstrap() {
   const swaggerDocument = load(fileContents);
   app.use('/doc', serve, setup(swaggerDocument));
   await app.listen(port);
+  console.log(`Server is started on port ${port}`);
 }
 bootstrap();

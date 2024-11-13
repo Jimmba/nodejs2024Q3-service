@@ -14,6 +14,8 @@ import {
   UserModule,
 } from './modules';
 
+import { UserEntity } from './modules/users/entities';
+
 config();
 
 const {
@@ -35,7 +37,7 @@ const host = IS_DEV ? 'localhost' : 'postgres';
       username,
       password,
       database,
-      entities: [], //! add here?
+      entities: [UserEntity],
       synchronize: true, //! remove?
     }),
     AlbumModule,
