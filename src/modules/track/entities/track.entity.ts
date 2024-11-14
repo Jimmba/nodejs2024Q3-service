@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { ArtistEntity } from 'src/modules/artists/entities';
 import { ITrack } from '../interfaces';
 import { AlbumEntity } from 'src/modules/album/entities';
+import { FavoritesEntity } from 'src/modules/favorites/entities';
 
 @Entity('tracks')
 export class TrackEntity implements ITrack {
@@ -31,4 +32,7 @@ export class TrackEntity implements ITrack {
     onDelete: 'SET NULL',
   })
   album: AlbumEntity;
+
+  @OneToMany(() => FavoritesEntity, (fav) => fav.track)
+  favs: FavoritesEntity[];
 }

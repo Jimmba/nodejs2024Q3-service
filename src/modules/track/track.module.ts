@@ -12,5 +12,6 @@ import { TrackService } from './services';
   imports: [ArtistModule, AlbumModule, TypeOrmModule.forFeature([TrackEntity])],
   controllers: [TrackController],
   providers: [TrackService],
+  exports: [TrackService],
 })
 export class TrackModule {}
