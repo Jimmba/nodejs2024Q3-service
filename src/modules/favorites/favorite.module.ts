@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DatabaseModule } from '../../databases';
-
 import { FavoriteController } from './controllers';
 import { FavoritesEntity } from './entities';
 import { FavoriteService } from './services';
@@ -12,7 +10,6 @@ import { TrackModule } from '../track';
 
 @Module({
   imports: [
-    DatabaseModule,
     TypeOrmModule.forFeature([FavoritesEntity]),
     ArtistModule,
     AlbumModule,

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { DatabaseService } from '../../../databases';
 import {
   NotFoundException,
   UnprocessableEntityException,
@@ -23,7 +22,6 @@ interface ICreateFavorite {
 @Injectable()
 export class FavoriteService {
   constructor(
-    private readonly database: DatabaseService,
     @Inject(ArtistService)
     private readonly artistService: ArtistService,
     @Inject(AlbumService)
