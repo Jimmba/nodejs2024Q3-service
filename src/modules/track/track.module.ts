@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DatabaseModule } from '../../databases';
 import { TrackController } from './controllers';
 
+import { AlbumModule } from '../album';
+import { ArtistModule } from '../artists';
+import { TrackEntity } from './entities';
 import { TrackService } from './services';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [ArtistModule, AlbumModule, TypeOrmModule.forFeature([TrackEntity])],
   controllers: [TrackController],
   providers: [TrackService],
 })

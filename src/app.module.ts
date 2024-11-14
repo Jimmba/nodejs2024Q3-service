@@ -14,9 +14,10 @@ import {
   UserModule,
 } from './modules';
 
-import { UserEntity } from './modules/users/entities';
-import { ArtistEntity } from './modules/artists/entities';
 import { AlbumEntity } from './modules/album/entities';
+import { ArtistEntity } from './modules/artists/entities';
+import { TrackEntity } from './modules/track/entities';
+import { UserEntity } from './modules/users/entities';
 
 config();
 
@@ -39,7 +40,7 @@ const host = IS_DEV ? 'localhost' : 'postgres';
       username,
       password,
       database,
-      entities: [AlbumEntity, ArtistEntity, UserEntity],
+      entities: [AlbumEntity, ArtistEntity, TrackEntity, UserEntity],
       synchronize: true, //! remove?
     }),
     AlbumModule,

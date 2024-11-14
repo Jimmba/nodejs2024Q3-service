@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { IAlbum } from '../interfaces';
 import { ArtistEntity } from 'src/modules/artists/entities';
+import { TrackEntity } from 'src/modules/track/entities';
 
 @Entity('albums')
 export class AlbumEntity implements IAlbum {
@@ -17,7 +18,11 @@ export class AlbumEntity implements IAlbum {
   artistId: string | null;
 
   @ManyToOne(() => ArtistEntity, (artist) => artist.albums, {
+    onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
   })
   artist: ArtistEntity;
+
+  @OneToMany(() => TrackEntity, (track) => track.album)
+  tracks: TrackEntity[];
 }

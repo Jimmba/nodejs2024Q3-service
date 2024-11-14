@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { NotFoundException } from '../../../common/exceptions';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../../common/exceptions';
 import { generateUuid } from '../../../common/helpers';
 
 import { CreateAlbumDto } from '../dtos';
@@ -19,6 +22,24 @@ export class AlbumService {
     private readonly artistService: ArtistService,
   ) {}
 
+  private async validateAlbum(id: string) {
+    if (id === null) return;
+    const album = await this.getAlbumById(id);
+    if (!album) {
+      throw new BadRequestException(`Album '${id}' does not exist`);
+    }
+    return album;
+  }
+
+  public async validateIds(albumId: string, artistId: string): Promise<void> {
+    const album = await this.validateAlbum(albumId);
+    const artist = await this.artistService.validateArtist(artistId);
+    if (album && artist && album.artistId !== artist.id)
+      throw new BadRequestException(
+        `Passed album id does not belong to passed artist`,
+      );
+  }
+
   public async getAlbums(): Promise<IAlbum[]> {
     return this.albumRepository.find();
   }
@@ -29,14 +50,9 @@ export class AlbumService {
     return album;
   }
 
-  private async validateArtist(body: CreateAlbumDto) {
-    const { artistId } = body;
-    if (artistId === null) return;
-    await this.artistService.getArtistById(artistId);
-  }
-
   public async createAlbum(createAlbum: CreateAlbumDto): Promise<IAlbum> {
-    await this.validateArtist(createAlbum);
+    const { artistId } = createAlbum;
+    await this.artistService.validateArtist(artistId);
     const album: IAlbum = {
       id: generateUuid(),
       ...createAlbum,
@@ -51,8 +67,9 @@ export class AlbumService {
     updateAlbum: CreateAlbumDto,
   ): Promise<IAlbum> {
     await this.getAlbumById(id);
-    await this.validateArtist(updateAlbum);
-    const res = await this.albumRepository.update(id, {
+    const { artistId } = updateAlbum;
+    await this.artistService.validateArtist(artistId);
+    await this.albumRepository.update(id, {
       id,
       ...updateAlbum,
     });

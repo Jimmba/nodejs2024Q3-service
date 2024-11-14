@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { NotFoundException } from '../../../common/exceptions';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../../common/exceptions';
 
 import { CreateArtistDto } from '../dtos';
 import { IArtist } from '../interfaces';
@@ -15,6 +18,15 @@ export class ArtistService {
     @InjectRepository(ArtistEntity)
     private readonly artistRepository: Repository<ArtistEntity>,
   ) {}
+
+  public async validateArtist(id: string) {
+    if (id === null) return;
+    const artist = await this.getArtistById(id);
+    if (!artist) {
+      throw new BadRequestException(`Artist '${id}' does not exist`);
+    }
+    return artist;
+  }
 
   public async getArtists(): Promise<IArtist[]> {
     return this.artistRepository.find();
