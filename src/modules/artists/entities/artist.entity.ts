@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { IArtist } from '../interfaces';
+import { AlbumEntity } from 'src/modules/album/entities';
 
 @Entity('artists')
 export class ArtistEntity implements IArtist {
@@ -11,4 +12,7 @@ export class ArtistEntity implements IArtist {
 
   @Column()
   name: string;
+
+  @OneToMany(() => AlbumEntity, (album) => album.artist)
+  albums: AlbumEntity[];
 }

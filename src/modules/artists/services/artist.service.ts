@@ -42,8 +42,8 @@ export class ArtistService {
     id: string,
     updateArtist: CreateArtistDto,
   ): Promise<IArtist> {
-    const savedArtist = await this.getArtistById(id);
-    await this.artistRepository.update(savedArtist, {
+    await this.getArtistById(id);
+    await this.artistRepository.update(id, {
       id,
       ...updateArtist,
     });

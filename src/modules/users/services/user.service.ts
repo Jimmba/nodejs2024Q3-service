@@ -71,12 +71,11 @@ export class UserService {
     id: string,
     body: UpdatePasswordDto,
   ): Promise<IUserResponse> {
-    const savedUser = await this.getFullUserById(id);
-    const { password: savedPassword, version } = savedUser;
+    const { password: savedPassword, version } = await this.getFullUserById(id);
     const { oldPassword, newPassword } = body;
     if (savedPassword !== oldPassword)
       throw new ForbiddenException(`Wrong password`);
-    await this.userRepository.update(savedUser, {
+    await this.userRepository.update(id, {
       password: newPassword,
       version: version + 1,
       updatedAt: new Date().getTime(),
