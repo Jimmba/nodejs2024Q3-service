@@ -24,11 +24,7 @@ export class AlbumService {
 
   private async validateAlbum(id: string) {
     if (id === null) return;
-    const album = await this.getAlbumById(id);
-    if (!album) {
-      throw new BadRequestException(`Album '${id}' does not exist`);
-    }
-    return album;
+    return await this.getAlbumByIdOrThrow(id);
   }
 
   public async validateIds(albumId: string, artistId: string): Promise<void> {
@@ -45,7 +41,11 @@ export class AlbumService {
   }
 
   public async getAlbumById(id: string): Promise<IAlbum> {
-    const album = await this.albumRepository.findOneBy({ id });
+    return await this.albumRepository.findOneBy({ id });
+  }
+
+  public async getAlbumByIdOrThrow(id: string): Promise<IAlbum> {
+    const album = await this.getAlbumById(id);
     if (!album) throw new NotFoundException(`Album '${id}' not found`);
     return album;
   }
@@ -66,18 +66,18 @@ export class AlbumService {
     id: string,
     updateAlbum: CreateAlbumDto,
   ): Promise<IAlbum> {
-    await this.getAlbumById(id);
+    await this.getAlbumByIdOrThrow(id);
     const { artistId } = updateAlbum;
     await this.artistService.validateArtist(artistId);
     await this.albumRepository.update(id, {
       id,
       ...updateAlbum,
     });
-    return this.getAlbumById(id);
+    return this.getAlbumByIdOrThrow(id);
   }
 
   public async deleteAlbum(id: string): Promise<void> {
-    await this.getAlbumById(id);
+    await this.getAlbumByIdOrThrow(id);
     await this.albumRepository.delete(id);
   }
 }

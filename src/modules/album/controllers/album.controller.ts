@@ -26,7 +26,7 @@ export class AlbumController {
   @Get(':id')
   getAlbumById(@Param() param: AlbumIdDto): Promise<IAlbum> {
     const { id } = param;
-    return this.albumService.getAlbumById(id);
+    return this.albumService.getAlbumByIdOrThrow(id);
   }
 
   @Post()

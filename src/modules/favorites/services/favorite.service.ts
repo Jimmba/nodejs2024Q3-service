@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '../../../common/exceptions';
-import { IFavorites } from '../interfaces';
+import { ICreateFavorite, IFavorites } from '../interfaces';
 import { ArtistService } from 'src/modules/artists/services';
 import { AlbumService } from 'src/modules/album/services';
 import { TrackService } from 'src/modules/track/services';
@@ -13,12 +13,6 @@ import { FavoritesEntity } from '../entities';
 import { Repository } from 'typeorm';
 import { generateUuid } from 'src/common/helpers';
 
-interface ICreateFavorite {
-  //! replace
-  albumId?: string;
-  artistId?: string;
-  trackId?: string;
-}
 @Injectable()
 export class FavoriteService {
   constructor(
@@ -56,13 +50,7 @@ export class FavoriteService {
   }
 
   public async addAlbumToFavorites(albumId: string): Promise<void> {
-    let album;
-    try {
-      album = await this.albumService.getAlbumById(albumId); //! returns bad request. Check others;
-    } catch (e) {
-      album = null;
-    }
-
+    const album = await this.albumService.getAlbumById(albumId);
     if (!album)
       throw new UnprocessableEntityException(`Album '${albumId}' not found`);
     await this.favoritesRepository.save(
@@ -81,13 +69,7 @@ export class FavoriteService {
   }
 
   public async addArtistToFavorites(artistId: string): Promise<void> {
-    let artist;
-    try {
-      artist = await this.artistService.getArtistById(artistId); //! returns bad request. Check others;
-    } catch (e) {
-      artist = null;
-    }
-
+    const artist = await this.artistService.getArtistById(artistId);
     if (!artist)
       throw new UnprocessableEntityException(`Artist '${artistId}' not found`);
     await this.favoritesRepository.save(
@@ -106,12 +88,7 @@ export class FavoriteService {
   }
 
   public async addTrackToFavorites(trackId: string): Promise<void> {
-    let track;
-    try {
-      track = await this.trackService.getTrackById(trackId); //! returns bad request. Check others;
-    } catch (e) {
-      track = null;
-    }
+    const track = await this.trackService.getTrackById(trackId);
     if (!track)
       throw new UnprocessableEntityException(`Track '${trackId}' not found`);
     await this.favoritesRepository.save(

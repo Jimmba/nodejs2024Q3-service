@@ -21,11 +21,7 @@ export class ArtistService {
 
   public async validateArtist(id: string) {
     if (id === null) return;
-    const artist = await this.getArtistById(id);
-    if (!artist) {
-      throw new BadRequestException(`Artist '${id}' does not exist`);
-    }
-    return artist;
+    return await this.getArtistByIdOrThrow(id);
   }
 
   public async getArtists(): Promise<IArtist[]> {
@@ -33,7 +29,11 @@ export class ArtistService {
   }
 
   public async getArtistById(id: string): Promise<IArtist> {
-    const artist = await this.artistRepository.findOneBy({ id });
+    return await this.artistRepository.findOneBy({ id });
+  }
+
+  public async getArtistByIdOrThrow(id: string): Promise<IArtist> {
+    const artist = await this.getArtistById(id);
     if (!artist) throw new NotFoundException(`Artist '${id}' not found`);
     return artist;
   }
@@ -54,16 +54,16 @@ export class ArtistService {
     id: string,
     updateArtist: CreateArtistDto,
   ): Promise<IArtist> {
-    await this.getArtistById(id);
+    await this.getArtistByIdOrThrow(id);
     await this.artistRepository.update(id, {
       id,
       ...updateArtist,
     });
-    return this.getArtistById(id);
+    return this.getArtistByIdOrThrow(id);
   }
 
   public async deleteArtist(id: string): Promise<void> {
-    await this.getArtistById(id);
+    await this.getArtistByIdOrThrow(id);
     await this.artistRepository.delete(id);
   }
 }

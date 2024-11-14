@@ -24,7 +24,11 @@ export class TrackService {
   }
 
   public async getTrackById(id: string): Promise<ITrack> {
-    const track = await this.trackRepository.findOneBy({ id });
+    return await this.trackRepository.findOneBy({ id });
+  }
+
+  public async getTrackByIdOrThrow(id: string): Promise<ITrack> {
+    const track = await this.getTrackById(id);
     if (!track) throw new NotFoundException(`Track '${id}' not found`);
     return track;
   }
@@ -45,18 +49,18 @@ export class TrackService {
     id: string,
     updateTrack: CreateTrackDto,
   ): Promise<ITrack> {
-    await this.getTrackById(id);
+    await this.getTrackByIdOrThrow(id);
     const { albumId, artistId } = updateTrack;
     await this.albumService.validateIds(albumId, artistId);
     await this.trackRepository.update(id, {
       id,
       ...updateTrack,
     });
-    return this.getTrackById(id);
+    return this.getTrackByIdOrThrow(id);
   }
 
   public async deleteTrack(id: string): Promise<void> {
-    await this.getTrackById(id);
+    await this.getTrackByIdOrThrow(id);
     await this.trackRepository.delete(id);
   }
 }
