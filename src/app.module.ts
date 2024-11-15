@@ -23,15 +23,19 @@ import { FavoritesEntity } from './modules/favorites/entities';
 config();
 
 const {
-  POSTGRES_PORT,
   POSTGRES_USER: username,
   POSTGRES_PASSWORD: password,
   POSTGRES_DB: database,
-  IS_DEV,
+  IS_CONTAINER,
+  POSTGRES_MOUNT_PORT,
+  POSTGRES_DEFAULT_PORT,
 } = process.env;
 
-const port = IS_DEV ? parseInt(POSTGRES_PORT) : 5432;
-const host = IS_DEV ? 'localhost' : 'postgres';
+const port = IS_CONTAINER
+  ? parseInt(POSTGRES_DEFAULT_PORT)
+  : parseInt(POSTGRES_MOUNT_PORT);
+const host = IS_CONTAINER ? 'postgres' : 'localhost';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
