@@ -1,6 +1,6 @@
 version: '3'
 services:
-  rest-resvice-api:
+  rest-service-api:
     container_name: rest-service
     build:
       context: .

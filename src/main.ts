@@ -11,6 +11,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   config();
+  // throw new Error('oops');
 
   const port = parseInt(process.env.PORT) || 4001;
   const app = await NestFactory.create(AppModule);
