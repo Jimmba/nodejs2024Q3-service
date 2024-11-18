@@ -25,16 +25,10 @@ const {
   POSTGRES_DEFAULT_PORT,
 } = process.env;
 
-console.log(username);
-
 const port = IS_CONTAINER
   ? parseInt(POSTGRES_DEFAULT_PORT)
   : parseInt(POSTGRES_MOUNT_PORT);
 const host = IS_CONTAINER ? 'postgres' : 'localhost';
-
-console.log('is cont ', IS_CONTAINER);
-console.log(port);
-console.log(host);
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',

@@ -40,7 +40,6 @@ export class FavoriteService {
     const favorites = await this.favoritesRepository.find({
       relations: ['artist', 'album', 'track'],
     });
-    console.log(favorites);
 
     return {
       artists: favorites.filter((fav) => fav.artist).map((fav) => fav.artist),
