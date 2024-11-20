@@ -53,6 +53,7 @@ export const dataSourceOptions: DataSourceOptions = {
   ],
   migrationsTableName: 'migrations_table',
   synchronize: false,
+  migrationsRun: true,
 };
 
 export const dataSource = new DataSource(dataSourceOptions);

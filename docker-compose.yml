@@ -8,8 +8,6 @@ services:
     # image: jimmba/rest-service:latest
     env_file:
       - .env
-    environment:
-      - IS_CONTAINER=true
     ports:
       - '${PORT}:${PORT}'
     depends_on:
