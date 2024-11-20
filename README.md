@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/Jimmba/nodejs2024Q3-service.git
 ```
 
 ## Installing NPM modules
@@ -17,15 +17,34 @@ git clone {repository URL}
 npm install
 ```
 
+update `.env` if needed
+
 ## Running application
 
 ```
 npm start
 ```
 
+## Running container
+
+Install docker compose and run it according to operating system (https://docs.docker.com/compose/install/)
+`docker compose up --build` (Linux OS)
+
+## Migrations
+
+After starting container run `npm run migrations:up` to create tables in database
+
+## Documentation
+
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Developing mode
+
+You can run container in `watch` mode. Container should restart if there are some changes in `src` folder
+Run `watch` mode according instructions according your OS (https://docs.docker.com/compose/how-tos/file-watch/)
+`docker compose watch` (Linux OS)
 
 ## Testing
 

@@ -1,32 +1,45 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import {
   BadRequestException,
   NotFoundException,
 } from '../../../common/exceptions';
-import { DatabaseService } from '../../../databases';
 
+import { generateUuid } from '../../../common/helpers';
 import { CreateUserDto, UpdatePasswordDto } from '../dtos';
+import { UserEntity } from '../entities';
 import { IUser, IUserResponse } from '../interfaces';
 
+const getNumber = (value: string | number): number => {
+  return typeof value === 'number' ? value : parseInt(value);
+};
 @Injectable()
 export class UserService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
 
-  private filteredUser(user: IUser): IUserResponse {
-    const { password, ...rest } = user;
-    return { ...rest };
+  private filteredUser(user: UserEntity): IUserResponse {
+    const { password, createdAt, updatedAt, ...rest } = user;
+    return {
+      createdAt: getNumber(createdAt),
+      updatedAt: getNumber(updatedAt),
+      ...rest,
+    };
   }
 
   public async getAllUsers(): Promise<IUserResponse[]> {
-    const users = await this.database.getUsers();
+    const users = await this.userRepository.find();
     return users.map(this.filteredUser);
   }
 
   private async getFullUserById(id: string): Promise<IUser> {
-    const user = await this.database.getUserById(id);
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) throw new NotFoundException(`User '${id}' not found`);
-
     return user;
   }
 
@@ -36,12 +49,21 @@ export class UserService {
   }
 
   public async createUser(createUser: CreateUserDto): Promise<IUserResponse> {
-    const { login } = createUser;
-    const savedUser = await this.database.getUserByLogin(login);
+    const { login, password } = createUser;
+    const savedUser = await this.userRepository.findOneBy({ login });
     if (savedUser)
       throw new BadRequestException(`User '${login}' already exists`);
 
-    const user = await this.database.createUser(createUser);
+    const user: IUser = {
+      id: generateUuid(),
+      login,
+      password,
+      version: 1,
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+    };
+    const newUser = this.userRepository.create(user);
+    await this.userRepository.save(newUser);
     return this.filteredUser(user);
   }
 
@@ -49,17 +71,21 @@ export class UserService {
     id: string,
     body: UpdatePasswordDto,
   ): Promise<IUserResponse> {
-    const savedUser = await this.getFullUserById(id);
-    const { password: savedPassword } = savedUser;
+    const { password: savedPassword, version } = await this.getFullUserById(id);
     const { oldPassword, newPassword } = body;
     if (savedPassword !== oldPassword)
       throw new ForbiddenException(`Wrong password`);
-    const updatedUser = await this.database.updatePassword(id, newPassword);
+    await this.userRepository.update(id, {
+      password: newPassword,
+      version: version + 1,
+      updatedAt: new Date().getTime(),
+    });
+    const updatedUser = await this.getFullUserById(id);
     return this.filteredUser(updatedUser);
   }
 
   public async deleteUser(id: string): Promise<void> {
     await this.getUserById(id);
-    return this.database.deleteUser(id);
+    await this.userRepository.delete(id);
   }
 }

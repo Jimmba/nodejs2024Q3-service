@@ -11,6 +11,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   config();
+  // throw new Error('oops');
 
   const port = parseInt(process.env.PORT) || 4001;
   const app = await NestFactory.create(AppModule);
@@ -24,5 +25,6 @@ async function bootstrap() {
   const swaggerDocument = load(fileContents);
   app.use('/doc', serve, setup(swaggerDocument));
   await app.listen(port);
+  console.log(`Server is started on port ${port}`);
 }
 bootstrap();

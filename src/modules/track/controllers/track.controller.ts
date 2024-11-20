@@ -27,7 +27,7 @@ export class TrackController {
   @Get(':id')
   getTrackById(@Param() param: TrackIdDto): Promise<ITrack> {
     const { id } = param;
-    return this.trackService.getTrackById(id);
+    return this.trackService.getTrackByIdOrThrow(id);
   }
 
   @Post()

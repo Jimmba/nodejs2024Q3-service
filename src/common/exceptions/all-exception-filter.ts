@@ -26,6 +26,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           Object.getOwnPropertyNames(exception),
         )}`,
       );
+      process.exit(1);
     }
 
     httpAdapter.reply(
