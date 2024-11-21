@@ -2,22 +2,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, genSalt, hash } from 'bcrypt';
 import { config } from 'dotenv';
+import { sign, verify } from 'jsonwebtoken';
+import { Repository } from 'typeorm';
 
 import { CreateUserDto } from '../../../modules/users/dtos';
 import { UserService } from '../../../modules/users/services';
-import { ForbiddenException } from 'src/common/exceptions';
-import { sign, verify } from 'jsonwebtoken';
+import { ForbiddenException } from '../../../common/exceptions';
+import { generateUuid } from '../../../common/helpers';
+
 import { TokenEntity } from '../entities/auth.entity';
-import { generateUuid } from 'src/common/helpers';
-import { Repository } from 'typeorm';
-import { IToken } from '../interfaces';
+import { IJwtPayload, IToken } from '../interfaces';
 
 config();
-
-interface IJwtPayload {
-  userId: string;
-  login: string;
-}
 
 const {
   CRYPT_SALT,
@@ -69,7 +65,7 @@ export class AuthService {
     return null;
   }
 
-  async deleteRefreshTokensByUserId(userId: string) {
+  async deleteRefreshTokensByUserId(userId: string): Promise<void> {
     const tokens = await this.tokenRepository.find({
       where: { userId },
     });
@@ -80,7 +76,10 @@ export class AuthService {
     }
   }
 
-  private async saveRefreshToken(userId: string, refreshToken: string) {
+  private async saveRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
     const token: IToken = {
       id: generateUuid(),
       userId,
@@ -91,7 +90,7 @@ export class AuthService {
     await this.tokenRepository.save(token);
   }
 
-  private async generateTokens(userId: string, login: string) {
+  private async generateTokens(userId: string, login: string): Promise<any> {
     const payload: IJwtPayload = {
       userId,
       login,
@@ -123,9 +122,7 @@ export class AuthService {
       ...createUserDto,
       password: hashedPassword,
     };
-    const user = await this.userService.createUser(updatedDto);
-    const { id, login } = user;
-    return this.generateTokens(id, login);
+    return await this.userService.createUser(updatedDto);
   }
 
   async login(createUserDto: CreateUserDto): Promise<any> {
@@ -142,7 +139,7 @@ export class AuthService {
 
   async refresh(refreshToken: string): Promise<any> {
     const tokenId = await this.getValidRefreshTokenId(refreshToken);
-    if (!tokenId) throw new ForbiddenException('OOPS');
+    if (!tokenId) throw new ForbiddenException();
     const { userId, login } = await this.getPayload(
       refreshToken,
       JWT_SECRET_REFRESH_KEY,

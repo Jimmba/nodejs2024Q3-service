@@ -1,7 +1,7 @@
-import { IsDefined, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class RefreshTokenDto {
   @IsString()
-  @IsDefined()
-  refreshToken: string;
+  @IsOptional()
+  refreshToken?: string;
 }
