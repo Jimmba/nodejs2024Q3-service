@@ -6,7 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { LoggingInterceptor } from './common/interceptors';
-import { LoggingModule } from './common/services';
+import { FsModule, LoggingModule } from './common/services';
 
 import { dataSourceOptions } from './datasource';
 
@@ -21,6 +21,7 @@ import {
 @Module({
   imports: [
     LoggingModule,
+    FsModule,
     TypeOrmModule.forRoot(dataSourceOptions),
     AlbumModule,
     ArtistModule,
@@ -33,7 +34,7 @@ import {
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
+      useClass: LoggingInterceptor, //! works or interceptor or tests
     },
   ],
 })

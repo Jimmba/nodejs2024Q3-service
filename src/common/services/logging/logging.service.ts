@@ -1,7 +1,8 @@
-import { Injectable, LoggerService } from '@nestjs/common';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { config } from 'dotenv';
 
-import { LOG_CODES, LOG_LEVELS } from './logging.constants';
+import { LOG_CODES, LOG_LEVELS } from '../../constants';
+import { FsService } from '../fs';
 
 config();
 
@@ -18,22 +19,40 @@ const getLogLevel = (): number => {
 export class LoggingService implements LoggerService {
   private logLevel: number;
 
-  constructor() {
+  constructor(
+    @Inject(FsService)
+    private readonly fsService: FsService,
+  ) {
     this.logLevel = getLogLevel();
   }
 
-  private writeLog(level: string, message: string): void {
+  private async writeLog(
+    level: LOG_LEVELS,
+    message: string,
+    isWriteToFile = true,
+  ) {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] [${level}] ${message}\n`;
     process.stdout.write(logMessage);
+
+    if (!isWriteToFile) return;
+
+    if (level === LOG_LEVELS.ERROR) {
+      this.fsService.writeErrorLogs(logMessage).catch((e) => {
+        this.writeLog(LOG_LEVELS.ERROR, e.message, false);
+      });
+    }
+    this.fsService.writeAllLogs(logMessage).catch((e) => {
+      this.writeLog(LOG_LEVELS.ERROR, e.message, false);
+    });
   }
 
-  fatal(message: any) {
+  fatal(message: string) {
     if (this.logLevel < LOG_CODES.FATAL) return;
     this.writeLog(LOG_LEVELS.FATAL, message);
   }
 
-  error(message: any, trace?: string) {
+  error(message: string, trace?: string) {
     if (this.logLevel < LOG_CODES.ERROR) return;
     this.writeLog(
       LOG_LEVELS.ERROR,
@@ -41,17 +60,17 @@ export class LoggingService implements LoggerService {
     );
   }
 
-  warn(message: any) {
+  warn(message: string) {
     if (this.logLevel < LOG_CODES.WARN) return;
     this.writeLog(LOG_LEVELS.WARN, message);
   }
 
-  log(message: any) {
+  log(message: string) {
     if (this.logLevel < LOG_CODES.INFO) return;
     this.writeLog(LOG_LEVELS.INFO, message);
   }
 
-  debug?(message: any) {
+  debug?(message: string) {
     if (this.logLevel < LOG_CODES.DEBUG) return;
     this.writeLog(LOG_LEVELS.DEBUG, message);
   }

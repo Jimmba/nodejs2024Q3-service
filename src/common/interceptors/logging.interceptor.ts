@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { LoggingService } from '../services/logging';
@@ -10,6 +10,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
     const { url, query, body, method } = request;
 
     this.loggingService.log(
@@ -19,12 +20,10 @@ export class LoggingInterceptor implements NestInterceptor {
     );
 
     return next.handle().pipe(
-      tap((response) => {
-        const statusCode = response.statusCode || 200;
+      tap((data) => {
+        const { statusCode } = response || HttpStatus.OK;
         this.loggingService.log(
-          `Response: [${statusCode}] ${url} | Body: ${JSON.stringify(
-            response,
-          )}`,
+          `Response: [${statusCode}] ${url} | Body: ${JSON.stringify(data)}`,
         );
       }),
     );
