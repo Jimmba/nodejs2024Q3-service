@@ -17,12 +17,14 @@ import {
   TrackModule,
   UserModule,
 } from './modules';
+import { AuthModule } from './modules/auth';
 
 @Module({
   imports: [
     LoggingModule,
     FsModule,
     TypeOrmModule.forRoot(dataSourceOptions),
+    AuthModule,
     AlbumModule,
     ArtistModule,
     FavoriteModule,

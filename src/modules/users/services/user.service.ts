@@ -23,7 +23,7 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  private filteredUser(user: UserEntity): IUserResponse {
+  private filteredUser(user: IUser): IUserResponse {
     const { password, createdAt, updatedAt, ...rest } = user;
     return {
       createdAt: getNumber(createdAt),
@@ -48,9 +48,13 @@ export class UserService {
     return this.filteredUser(user);
   }
 
+  public async getUserByLogin(login: string): Promise<IUser> {
+    return await this.userRepository.findOneBy({ login });
+  }
+
   public async createUser(createUser: CreateUserDto): Promise<IUserResponse> {
     const { login, password } = createUser;
-    const savedUser = await this.userRepository.findOneBy({ login });
+    const savedUser = await this.getUserByLogin(login);
     if (savedUser)
       throw new BadRequestException(`User '${login}' already exists`);
 
