@@ -43,12 +43,10 @@ export class AuthService {
   }
 
   async getValidRefreshTokenId(refreshToken: string): Promise<string | null> {
-    let userId: string;
-
     const payload = await this.getPayload(refreshToken, JWT_SECRET_REFRESH_KEY);
     if (!payload) return null;
 
-    userId = payload.userId;
+    const { userId } = payload;
 
     const tokens = await this.tokenRepository.find({
       where: { userId },

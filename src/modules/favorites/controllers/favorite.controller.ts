@@ -6,12 +6,14 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
 import { TrackIdDto } from '../../../modules/track/dtos';
 import { IFavorites } from '../interfaces';
 import { FavoriteService } from '../services';
-
+import { AuthGuard } from '../../auth/guards';
+@UseGuards(AuthGuard)
 @Controller('favs')
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}

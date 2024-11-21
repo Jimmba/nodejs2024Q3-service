@@ -4,13 +4,13 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../services';
 import { CreateUserDto } from '../../../modules/users/dtos';
 import { RefreshTokenDto } from '../dto';
 import { UnauthorizedException } from '../../../common/exceptions';
-
+import { AuthGuard } from '../../auth/guards';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -26,6 +26,7 @@ export class AuthController {
     return this.authService.login(createUser);
   }
 
+  @UseGuards(AuthGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   refresh(
