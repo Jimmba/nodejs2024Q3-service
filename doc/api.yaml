@@ -10,6 +10,15 @@ servers:
 
 components:
   schemas:
+    Login:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YTE0MTU2ZC0wYTcxLTQ0ZWQtODBhMC05ZTdjZTU1YzEwMGIiLCJsb2dpbiI6InVzZXIiLCJpYXQiOjE3MzIyNzk1NjYsImV4cCI6MTczMjI4MzE2Nn0.lYXSciJibF4ItmDy6Sf-9m_JSDYLt0xUkSd8naM8ztI
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YTE0MTU2ZC0wYTcxLTQ0ZWQtODBhMC05ZTdjZTU1YzEwMGIiLCJsb2dpbiI6InVzZXIiLCJpYXQiOjE3MzIyNzk1NjYsImV4cCI6MTczMjM2NTk2Nn0.h22xkVgpIoE9idwQ1417i2O_2vlAYN8i9kReCWh622Y
     User:
       type: object
       properties:
@@ -310,88 +319,166 @@ components:
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
-#   securitySchemes:
-#     bearerAuth:
-#       type: http
-#       scheme: bearer
-#       bearerFormat: JWT
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 401
+        message:
+          type: string
+          example: Unauthorized
+        error:
+          type: string
+          example: Unauthorized
+    Forbidden:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 403
+        message:
+          type: string
+          example: Forbidden
+        error:
+          type: string
+          example: Forbidden
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
-# security:
-#   - bearerAuth: []
+security:
+  - bearerAuth: []
 
 paths:
-  # /login:
-  #   post:
-  #     tags:
-  #       - Login
-  #     security: []
-  #     summary: Login
-  #     description: Logins a user and returns a JWT-token
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             title: example
-  #             properties:
-  #               login:
-  #                 type: string
-  #                 description: Username
-  #               password:
-  #                 type: string
-  #                 description: Password
-  #             required:
-  #               - user
-  #               - login
-  #     responses:
-  #       200:
-  #         description: Successful login.
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 token:
-  #                   type: string
-  #               description: JWT Token
-  #       403:
-  #         description: Incorrect login or password
-  # /signup:
-  #   post:
-  #     tags:
-  #       - Signup
-  #     security: [ ]
-  #     summary: Signup
-  #     description: Signup a user
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             title: example
-  #             properties:
-  #               login:
-  #                 type: string
-  #                 minLength: 3
-  #                 maxLength: 255
-  #                 description: Username
-  #               password:
-  #                 type: string
-  #                 format: password
-  #                 pattern: ^[a-zA-Z0-9]{3,30}
-  #                 description: Password
-  #             required:
-  #               - login
-  #               - password
-  #     responses:
-  #       204:
-  #         description: Successful signup
-  #       400:
-  #         description: Bad request
-  #       409:
-  #         description: Conflict. Login already exists
+  /auth/signup:
+    post:
+      tags:
+        - Authorization
+      security: []
+      summary: Signup
+      description: Signup a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                login:
+                  type: string
+                  minLength: 3
+                  maxLength: 255
+                  description: Username
+                  example: user
+                password:
+                  type: string
+                  format: password
+                  pattern: ^[a-zA-Z0-9]{3,30}
+                  description: Password
+                  example: password
+              required:
+                - login
+                - password
+      responses:
+        201:
+          description: The user has been created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad request. Body does not contain required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserBadRequest'
+  /auth/login:
+    post:
+      tags:
+        - Authorization
+      security: []
+      summary: Login
+      description: Logins a user and returns a JWT-token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                login:
+                  type: string
+                  description: user login
+                  example: user
+                password:
+                  type: string
+                  description: user password
+                  example: password
+              required:
+                - login
+                - password
+      responses:
+        201:
+          description: Successful login.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+        400:
+          description: Bad request. Body does not contain required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserBadRequest'
+        403:
+          description: Incorrect login or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/Forbidden'
+  /auth/refresh:
+    post:
+      tags:
+        - Authorization
+      summary: Refresh
+      description: Refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                refreshToken:
+                  type: string
+                  description: Refresh token value
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YTE0MTU2ZC0wYTcxLTQ0ZWQtODBhMC05ZTdjZTU1YzEwMGIiLCJsb2dpbiI6InVzZXIiLCJpYXQiOjE3MzIyNzk1NjYsImV4cCI6MTczMjM2NTk2Nn0.h22xkVgpIoE9idwQ1417i2O_2vlAYN8i9kReCWh622Y
+              required:
+                - refreshToken
+      responses:
+        200:
+          description: Tokens are updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
+        403:
+          description: Incorrect token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/Forbidden'
   /user:
     get:
       tags:
@@ -407,8 +494,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
         - Users
@@ -444,8 +535,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostUserBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
   /user/{userId}:
     parameters:
       - name: userId
@@ -471,8 +566,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: User not found
           content:
@@ -531,8 +630,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         403:
           description: Wrong password
           content:
@@ -559,8 +662,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: User not found
           content:
@@ -582,8 +689,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Track'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
         - Track
@@ -623,8 +734,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostTrackBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
   /track/{id}:
     parameters:
       - name: id
@@ -651,8 +766,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track not found.
           content:
@@ -723,8 +842,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track not found
           content:
@@ -745,8 +868,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track not found
           content:
@@ -768,8 +895,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Album'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
         - Album
@@ -807,8 +938,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostAlbumBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
   /album/{id}:
     parameters:
       - name: id
@@ -835,8 +970,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album not found
           content:
@@ -880,8 +1019,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album not found
           content:
@@ -902,8 +1045,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album not found
           content:
@@ -925,8 +1072,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Artist'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
         - Artist
@@ -959,8 +1110,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostArtistBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
   /artist/{id}:
     parameters:
       - name: id
@@ -987,8 +1142,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Artist not found
           content:
@@ -1027,8 +1186,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Artist not found
           content:
@@ -1049,8 +1212,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Artist not found
           content:
@@ -1070,8 +1237,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Favorites'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
   /favs/track/{id}:
     parameters:
       - name: id
@@ -1094,8 +1265,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         422:
           description: Track with id doesn't exist
           content:
@@ -1116,8 +1291,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track not found
           content:
@@ -1146,8 +1325,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         422:
           description: Album with id doesn't exist
           content:
@@ -1168,8 +1351,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album not found
           content:
@@ -1198,8 +1385,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         422:
           description: Artist with id doesn't exist
           content:
@@ -1220,8 +1411,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UUIDBadRequest'
-        # 401:
-        #   $ref: '#/components/responses/UnauthorizedError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Artist not found
           content:
