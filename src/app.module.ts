@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
@@ -18,6 +18,7 @@ import {
   UserModule,
 } from './modules';
 import { AuthModule } from './modules/auth';
+import { AuthGuard } from './modules/auth/guards';
 
 @Module({
   imports: [
@@ -36,7 +37,11 @@ import { AuthModule } from './modules/auth';
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor, //! works or interceptor or tests
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })

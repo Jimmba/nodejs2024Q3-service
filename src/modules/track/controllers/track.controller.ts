@@ -14,15 +14,13 @@ import {
 import { CreateTrackDto, TrackIdDto } from '../dtos';
 import { ITrack } from '../interfaces';
 import { TrackService } from '../services/track.service';
-import { AuthGuard } from '../../auth/guards';
-@UseGuards(AuthGuard)
+
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Get()
   getAllTracks(): Promise<ITrack[]> {
-    //! getTracks?
     return this.trackService.getTracks();
   }
 

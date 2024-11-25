@@ -9,7 +9,6 @@ import {
 
 import { UnauthorizedException } from '../../../common/exceptions';
 import { RefreshTokenDto } from '../dto';
-import { AuthGuard } from '../../auth/guards';
 import { AuthService } from '../services';
 import { CreateUserDto } from '../../../modules/users/dtos';
 import { IUserResponse } from '../../../modules/users/interfaces';
@@ -28,7 +27,6 @@ export class AuthController {
     return this.authService.login(createUser);
   }
 
-  @UseGuards(AuthGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   refresh(

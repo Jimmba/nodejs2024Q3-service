@@ -14,8 +14,7 @@ import {
 import { AlbumIdDto, CreateAlbumDto } from '../dtos';
 import { IAlbum } from '../interfaces';
 import { AlbumService } from '../services';
-import { AuthGuard } from '../../auth/guards';
-@UseGuards(AuthGuard)
+
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
