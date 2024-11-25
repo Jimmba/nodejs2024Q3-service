@@ -1,8 +1,10 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
-import { ArtistEntity } from 'src/modules/artists/entities';
+
+import { ArtistEntity } from '../../../modules/artists/entities';
+import { AlbumEntity } from '../../../modules/album/entities';
+import { FavoritesEntity } from '../../../modules/favorites/entities';
+
 import { ITrack } from '../interfaces';
-import { AlbumEntity } from 'src/modules/album/entities';
-import { FavoritesEntity } from 'src/modules/favorites/entities';
 
 @Entity('tracks')
 export class TrackEntity implements ITrack {
@@ -12,10 +14,10 @@ export class TrackEntity implements ITrack {
   @Column()
   name: string;
 
-  @Column({ type: 'uuid', nullable: true }) //! check others
+  @Column({ type: 'uuid', nullable: true })
   artistId: string | null;
 
-  @Column({ type: 'uuid', nullable: true }) //! check others
+  @Column({ type: 'uuid', nullable: true })
   albumId: string | null;
 
   @Column()

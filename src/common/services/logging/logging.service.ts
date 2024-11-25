@@ -7,7 +7,7 @@ import { FsService } from '../fs';
 config();
 
 const { LOG_LEVEL } = process.env;
-const DEFAULT_LEVEL = LOG_CODES.INFO;
+const DEFAULT_LEVEL = LOG_CODES.LOG;
 
 const getLogLevel = (): number => {
   const level = parseInt(LOG_LEVEL);
@@ -66,12 +66,17 @@ export class LoggingService implements LoggerService {
   }
 
   log(message: string) {
-    if (this.logLevel < LOG_CODES.INFO) return;
-    this.writeLog(LOG_LEVELS.INFO, message);
+    if (this.logLevel < LOG_CODES.LOG) return;
+    this.writeLog(LOG_LEVELS.LOG, message);
   }
 
   debug?(message: string) {
     if (this.logLevel < LOG_CODES.DEBUG) return;
     this.writeLog(LOG_LEVELS.DEBUG, message);
+  }
+
+  verbose?(message: string) {
+    if (this.logLevel < LOG_CODES.VERBOSE) return;
+    this.writeLog(LOG_LEVELS.VERBOSE, message);
   }
 }

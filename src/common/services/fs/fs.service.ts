@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { config } from 'dotenv';
 import { appendFile, mkdir, rename, stat } from 'node:fs/promises';
 import { basename, join } from 'node:path';
-import { LOGS_FILES_OPTIONS } from 'src/common/constants/fs.constant';
+
+import { LOGS_FILES_OPTIONS } from '../../constants/fs.constant';
 config();
 
 const { LOG_FILE_SIZE } = process.env;
@@ -19,7 +20,6 @@ export class FsService {
       await mkdir(LOGS_FILES_OPTIONS.dir, { recursive: true });
     } catch (error) {
       throw error;
-      // console.error('Error creating log directory', error);
     }
   }
 
@@ -34,7 +34,6 @@ export class FsService {
 
   private async rotateLogFile(filePath: string): Promise<void> {
     const fileSize = await this.getFileSize(filePath);
-
     if (fileSize < maxLogSize) {
       return;
     }
@@ -49,25 +48,19 @@ export class FsService {
       await rename(filePath, rotatedFilePath);
     } catch (error) {
       throw error;
-      // console.error(`Error rotating log file: ${filePath}`, error);
     }
   }
 
-  private async appendFile(fileName: string, message: string) {
-    const filePath = join(LOGS_FILES_OPTIONS.dir, fileName);
-    return appendFile(filePath, message);
-  }
-
   private async writeLogToFile(
-    filePath: string,
+    fileName: string,
     message: string,
   ): Promise<void> {
     try {
+      const filePath = join(LOGS_FILES_OPTIONS.dir, fileName);
       await this.rotateLogFile(filePath);
-      await this.appendFile(filePath, message);
+      await appendFile(filePath, message);
     } catch (error) {
       throw error;
-      // console.error(`Error writing to log file ${filePath}`, error);
     }
   }
 

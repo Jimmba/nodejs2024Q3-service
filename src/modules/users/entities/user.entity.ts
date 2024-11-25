@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { IUser } from '../interfaces';
-import { TokenEntity } from 'src/modules/auth/entities/auth.entity';
+
+import { TokenEntity } from '../../auth/entities/auth.entity';
 
 @Entity('users')
 export class UserEntity implements IUser {

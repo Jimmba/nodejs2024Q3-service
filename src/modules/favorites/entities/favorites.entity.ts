@@ -1,10 +1,12 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { IAlbum } from 'src/modules/album/interfaces';
-import { IArtist } from 'src/modules/artists/interfaces';
-import { ITrack } from 'src/modules/track/interfaces';
-import { ArtistEntity } from 'src/modules/artists/entities';
-import { TrackEntity } from 'src/modules/track/entities';
-import { AlbumEntity } from 'src/modules/album/entities';
+
+import { IAlbum } from '../../../modules/album/interfaces';
+import { IArtist } from '../../../modules/artists/interfaces';
+import { ITrack } from '../../../modules/track/interfaces';
+
+import { ArtistEntity } from '../../../modules/artists/entities';
+import { TrackEntity } from '../../../modules/track/entities';
+import { AlbumEntity } from '../../../modules/album/entities';
 
 @Entity('favs')
 export class FavoritesEntity {

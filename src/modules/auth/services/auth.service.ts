@@ -5,14 +5,15 @@ import { config } from 'dotenv';
 import { sign, verify } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 
-import { CreateUserDto } from '../../../modules/users/dtos';
-import { UserService } from '../../../modules/users/services';
 import { ForbiddenException } from '../../../common/exceptions';
 import { generateUuid } from '../../../common/helpers';
 
+import { CreateUserDto } from '../../../modules/users/dtos';
+import { IUserResponse } from '../../../modules/users/interfaces';
+import { UserService } from '../../../modules/users/services';
+
 import { TokenEntity } from '../entities/auth.entity';
 import { IJwtPayload, IToken, ITokens } from '../interfaces';
-import { IUserResponse } from 'src/modules/users/interfaces';
 
 config();
 
@@ -104,7 +105,7 @@ export class AuthService {
       expiresIn: TOKEN_REFRESH_EXPIRE_TIME,
     });
 
-    await this.deleteRefreshTokensByUserId(userId); //! remove all tokens?
+    await this.deleteRefreshTokensByUserId(userId);
     await this.saveRefreshToken(userId, refreshToken);
     return {
       accessToken,

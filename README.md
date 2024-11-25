@@ -26,6 +26,7 @@ ERROR = 1,
 WARN = 2,
 INFO = 3,
 DEBUG = 4,
+VERBOSE = 5,
 
 log file rotation size should be specified in Kb:
 LOG_FILE_SIZE=1024

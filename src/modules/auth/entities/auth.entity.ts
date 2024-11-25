@@ -1,5 +1,6 @@
-import { UserEntity } from 'src/modules/users/entities';
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+
+import { UserEntity } from '../../../modules/users/entities';
 import { IToken } from '../interfaces';
 
 @Entity('tokens')

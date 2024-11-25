@@ -1,17 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
+import { generateUuid } from '../../../common/helpers';
 import {
   NotFoundException,
   UnprocessableEntityException,
 } from '../../../common/exceptions';
 import { ICreateFavorite, IFavorites } from '../interfaces';
-import { ArtistService } from 'src/modules/artists/services';
-import { AlbumService } from 'src/modules/album/services';
-import { TrackService } from 'src/modules/track/services';
-import { InjectRepository } from '@nestjs/typeorm';
+
+import { ArtistService } from '../../../modules/artists/services';
+import { AlbumService } from '../../../modules/album/services';
+import { TrackService } from '../../../modules/track/services';
+
 import { FavoritesEntity } from '../entities';
-import { Repository } from 'typeorm';
-import { generateUuid } from 'src/common/helpers';
 
 @Injectable()
 export class FavoriteService {

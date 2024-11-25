@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { IAlbum } from '../interfaces';
-import { ArtistEntity } from 'src/modules/artists/entities';
-import { TrackEntity } from 'src/modules/track/entities';
-import { FavoritesEntity } from 'src/modules/favorites/entities';
+import { ArtistEntity } from '../../../modules/artists/entities';
+import { TrackEntity } from '../../../modules/track/entities';
+import { FavoritesEntity } from '../../../modules/favorites/entities';
 
 @Entity('albums')
 export class AlbumEntity implements IAlbum {
