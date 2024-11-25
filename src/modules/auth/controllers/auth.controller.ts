@@ -6,23 +6,25 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+
+import { UnauthorizedException } from '../../../common/exceptions';
+import { RefreshTokenDto } from '../dto';
+import { AuthGuard } from '../../auth/guards';
 import { AuthService } from '../services';
 import { CreateUserDto } from '../../../modules/users/dtos';
-import { RefreshTokenDto } from '../dto';
-import { UnauthorizedException } from '../../../common/exceptions';
-import { AuthGuard } from '../../auth/guards';
+import { IUserResponse } from '../../../modules/users/interfaces';
+import { ITokens } from '../interfaces';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  signup(@Body() createUser: CreateUserDto): Promise<any> {
-    console.log('signup');
+  signup(@Body() createUser: CreateUserDto): Promise<IUserResponse> {
     return this.authService.signup(createUser);
   }
 
   @Post('login')
-  login(@Body() createUser: CreateUserDto): Promise<any> {
+  login(@Body() createUser: CreateUserDto): Promise<ITokens> {
     return this.authService.login(createUser);
   }
 
@@ -30,9 +32,9 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   refresh(
-    @Body() //! Change to pipe?
+    @Body()
     body: RefreshTokenDto,
-  ): Promise<any> {
+  ): Promise<ITokens> {
     const { refreshToken } = body;
     if (!refreshToken) throw new UnauthorizedException();
     return this.authService.refresh(refreshToken);

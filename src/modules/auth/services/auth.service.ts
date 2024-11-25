@@ -11,7 +11,8 @@ import { ForbiddenException } from '../../../common/exceptions';
 import { generateUuid } from '../../../common/helpers';
 
 import { TokenEntity } from '../entities/auth.entity';
-import { IJwtPayload, IToken } from '../interfaces';
+import { IJwtPayload, IToken, ITokens } from '../interfaces';
+import { IUserResponse } from 'src/modules/users/interfaces';
 
 config();
 
@@ -88,7 +89,10 @@ export class AuthService {
     await this.tokenRepository.save(token);
   }
 
-  private async generateTokens(userId: string, login: string): Promise<any> {
+  private async generateTokens(
+    userId: string,
+    login: string,
+  ): Promise<ITokens> {
     const payload: IJwtPayload = {
       userId,
       login,
@@ -113,7 +117,7 @@ export class AuthService {
     return hash(value, salt);
   }
 
-  async signup(createUserDto: CreateUserDto): Promise<any> {
+  async signup(createUserDto: CreateUserDto): Promise<IUserResponse> {
     const { password } = createUserDto;
     const hashedPassword = await this.hashString(password);
     const updatedDto = {
@@ -123,7 +127,7 @@ export class AuthService {
     return await this.userService.createUser(updatedDto);
   }
 
-  async login(createUserDto: CreateUserDto): Promise<any> {
+  async login(createUserDto: CreateUserDto): Promise<ITokens> {
     const { login, password } = createUserDto;
     const user = await this.userService.getUserByLogin(login);
     if (!user) throw new ForbiddenException();
@@ -135,7 +139,7 @@ export class AuthService {
     return this.generateTokens(id, login);
   }
 
-  async refresh(refreshToken: string): Promise<any> {
+  async refresh(refreshToken: string): Promise<ITokens> {
     const tokenId = await this.getValidRefreshTokenId(refreshToken);
     if (!tokenId) throw new ForbiddenException();
     const { userId, login } = await this.getPayload(

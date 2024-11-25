@@ -26,9 +26,9 @@ export class UserService {
   private filteredUser(user: IUser): IUserResponse {
     const { password, createdAt, updatedAt, ...rest } = user;
     return {
+      ...rest,
       createdAt: getNumber(createdAt),
       updatedAt: getNumber(updatedAt),
-      ...rest,
     };
   }
 

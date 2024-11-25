@@ -5,3 +5,8 @@ export interface IToken {
   createdAt: number;
   updatedAt: number;
 }
+
+export interface ITokens {
+  refreshToken: string;
+  accessToken: string;
+}
