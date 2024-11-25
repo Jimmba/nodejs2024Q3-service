@@ -18,12 +18,12 @@ async function bootstrap() {
   const loggingService = app.get(LoggingService);
 
   process.on('uncaughtException', (error) => {
-    loggingService.error(`Uncaught Exception: ${error.message}`, error.stack);
+    loggingService.fatal(`Uncaught Exception: ${error.message}`);
     process.exit(1);
   });
 
   process.on('unhandledRejection', (reason, promise) => {
-    loggingService.error(
+    loggingService.fatal(
       `Unhandled Rejection at: ${promise}, reason: ${reason}`,
     );
     process.exit(1);

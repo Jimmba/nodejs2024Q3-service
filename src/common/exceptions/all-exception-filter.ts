@@ -26,7 +26,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       httpException = exception;
     } else {
       httpException = new InternalServerErrorException('Internal error');
-      this.loggingService.error(
+      this.loggingService.fatal(
         `Unhandled error: ${JSON.stringify(
           exception,
           Object.getOwnPropertyNames(exception),
