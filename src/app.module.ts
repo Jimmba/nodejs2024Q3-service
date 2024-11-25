@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,9 +11,17 @@ import {
   TrackModule,
   UserModule,
 } from './modules';
+import { dataSourceOptions } from './datasource';
 
 @Module({
-  imports: [AlbumModule, ArtistModule, FavoriteModule, TrackModule, UserModule],
+  imports: [
+    TypeOrmModule.forRoot(dataSourceOptions),
+    AlbumModule,
+    ArtistModule,
+    FavoriteModule,
+    TrackModule,
+    UserModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

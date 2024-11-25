@@ -1,0 +1,52 @@
+services:
+  rest-service-api:
+    container_name: rest-service
+    build:
+      context: .
+      dockerfile: api.Dockerfile
+    image: rest-service-api:latest
+    # image: jimmba/rest-service:latest
+    env_file:
+      - .env
+    ports:
+      - '${PORT}:${PORT}'
+    depends_on:
+      - postgres
+    networks:
+      - rest-service-network
+    restart: always
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
+        # - action: rebuild
+  postgres:
+    container_name: postgres-rest-service
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
+    image: rest-service-db:latest
+    env_file:
+      - .env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - '${POSTGRES_MOUNT_PORT}:${POSTGRES_DEFAULT_PORT}'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - pg_logs:/var/log/postgresql
+    networks:
+      - rest-service-network
+    restart: always
+networks:
+  rest-service-network:
+    driver: bridge
+    name: rest-service-bridge
+volumes:
+  pg_data:
+    driver: local
+  pg_logs:
+    driver: local

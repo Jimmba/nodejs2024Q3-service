@@ -1,53 +1,66 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import {
-  BadRequestException,
-  NotFoundException,
-} from '../../../common/exceptions';
-import { DatabaseService } from '../../../databases';
+import { NotFoundException } from '../../../common/exceptions';
+import { generateUuid } from '../../../common/helpers';
 import { CreateTrackDto } from '../dtos';
+import { TrackEntity } from '../entities';
 import { ITrack } from '../interfaces';
+import { AlbumService } from '../../../modules/album/services';
 
 @Injectable()
 export class TrackService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    @InjectRepository(TrackEntity)
+    private readonly trackRepository: Repository<TrackEntity>,
+
+    @Inject(AlbumService)
+    private readonly albumService: AlbumService,
+  ) {}
 
   public async getTracks(): Promise<ITrack[]> {
-    return this.database.getTracks();
+    return this.trackRepository.find();
   }
 
   public async getTrackById(id: string): Promise<ITrack> {
-    const track = await this.database.getTrackById(id);
+    return await this.trackRepository.findOneBy({ id });
+  }
+
+  public async getTrackByIdOrThrow(id: string): Promise<ITrack> {
+    const track = await this.getTrackById(id);
     if (!track) throw new NotFoundException(`Track '${id}' not found`);
     return track;
   }
 
-  private async validateIds(body: CreateTrackDto) {
-    const { albumId, artistId } = body;
-    const album = await this.database.validateAlbum(albumId);
-    const artist = await this.database.validateArtist(artistId);
-    if (album && artist && album.artistId !== artist.id)
-      throw new BadRequestException(
-        `Passed album id does not belong to passed artist`,
-      );
-  }
-
   public async createTrack(createTrack: CreateTrackDto): Promise<ITrack> {
-    await this.validateIds(createTrack);
-    return this.database.createTrack(createTrack);
+    const { albumId, artistId } = createTrack;
+    await this.albumService.validateIds(albumId, artistId);
+    const track: ITrack = {
+      id: generateUuid(),
+      ...createTrack,
+    };
+    const newTrack = this.trackRepository.create(track);
+    await this.trackRepository.save(newTrack);
+    return newTrack;
   }
 
   public async updateTrack(
     id: string,
     updateTrack: CreateTrackDto,
   ): Promise<ITrack> {
-    await this.getTrackById(id);
-    await this.validateIds(updateTrack);
-    return this.database.updateTrack(id, updateTrack);
+    await this.getTrackByIdOrThrow(id);
+    const { albumId, artistId } = updateTrack;
+    await this.albumService.validateIds(albumId, artistId);
+    await this.trackRepository.update(id, {
+      id,
+      ...updateTrack,
+    });
+    return this.getTrackByIdOrThrow(id);
   }
 
   public async deleteTrack(id: string): Promise<void> {
-    await this.getTrackById(id);
-    return this.database.deleteTrack(id);
+    await this.getTrackByIdOrThrow(id);
+    await this.trackRepository.delete(id);
   }
 }

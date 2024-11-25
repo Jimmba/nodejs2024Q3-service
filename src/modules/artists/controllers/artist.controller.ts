@@ -26,7 +26,7 @@ export class ArtistController {
   @Get(':id')
   getArtistById(@Param() param: ArtistIdDto): Promise<IArtist> {
     const { id } = param;
-    return this.artistService.getArtistById(id);
+    return this.artistService.getArtistByIdOrThrow(id);
   }
 
   @Post()
