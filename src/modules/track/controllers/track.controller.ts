@@ -20,7 +20,6 @@ export class TrackController {
 
   @Get()
   getAllTracks(): Promise<ITrack[]> {
-    //! getTracks?
     return this.trackService.getTracks();
   }
 

@@ -1,0 +1,138 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { compare } from 'bcrypt';
+import { config } from 'dotenv';
+import { sign, verify } from 'jsonwebtoken';
+import { Repository } from 'typeorm';
+
+import { ForbiddenException } from '../../../common/exceptions';
+import { generateUuid } from '../../../common/helpers';
+
+import { CreateUserDto } from '../../../modules/users/dtos';
+import { IUserResponse } from '../../../modules/users/interfaces';
+import { UserService } from '../../../modules/users/services';
+
+import { TokenEntity } from '../entities/auth.entity';
+import { IJwtPayload, IToken, ITokens } from '../interfaces';
+
+config();
+
+const {
+  JWT_SECRET_KEY,
+  JWT_SECRET_REFRESH_KEY,
+  TOKEN_EXPIRE_TIME,
+  TOKEN_REFRESH_EXPIRE_TIME,
+} = process.env;
+
+@Injectable()
+export class AuthService {
+  constructor(
+    @InjectRepository(TokenEntity)
+    private readonly tokenRepository: Repository<TokenEntity>,
+    @Inject(UserService)
+    private readonly userService: UserService,
+  ) {}
+
+  private async getPayload(token: string, key: string): Promise<IJwtPayload> {
+    try {
+      return verify(token, key) as IJwtPayload;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getValidRefreshTokenId(refreshToken: string): Promise<string | null> {
+    const payload = await this.getPayload(refreshToken, JWT_SECRET_REFRESH_KEY);
+    if (!payload) return null;
+
+    const { userId } = payload;
+
+    const tokens = await this.tokenRepository.find({
+      where: { userId },
+    });
+
+    for (const token of tokens) {
+      const { id, refreshToken: savedToken } = token;
+      const isCorrectHash = refreshToken === savedToken;
+      if (isCorrectHash) {
+        return id;
+      }
+    }
+
+    return null;
+  }
+
+  async deleteRefreshTokensByUserId(userId: string): Promise<void> {
+    const tokens = await this.tokenRepository.find({
+      where: { userId },
+    });
+
+    for (const token of tokens) {
+      const { id } = token;
+      await this.tokenRepository.delete(id);
+    }
+  }
+
+  private async saveRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
+    const token: IToken = {
+      id: generateUuid(),
+      userId,
+      refreshToken,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    await this.tokenRepository.save(token);
+  }
+
+  private async generateTokens(
+    userId: string,
+    login: string,
+  ): Promise<ITokens> {
+    const payload: IJwtPayload = {
+      userId,
+      login,
+    };
+    const accessToken = sign(payload, JWT_SECRET_KEY, {
+      expiresIn: TOKEN_EXPIRE_TIME,
+    });
+    const refreshToken = sign(payload, JWT_SECRET_REFRESH_KEY, {
+      expiresIn: TOKEN_REFRESH_EXPIRE_TIME,
+    });
+
+    await this.deleteRefreshTokensByUserId(userId);
+    await this.saveRefreshToken(userId, refreshToken);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async signup(createUserDto: CreateUserDto): Promise<IUserResponse> {
+    return await this.userService.createUser(createUserDto);
+  }
+
+  async login(createUserDto: CreateUserDto): Promise<ITokens> {
+    const { login, password } = createUserDto;
+    const user = await this.userService.getUserByLogin(login);
+    if (!user) throw new ForbiddenException();
+
+    const { id, password: hash } = user;
+    const isCorrectPassword = await compare(password, hash);
+    if (!isCorrectPassword) throw new ForbiddenException();
+
+    return this.generateTokens(id, login);
+  }
+
+  async refresh(refreshToken: string): Promise<ITokens> {
+    const tokenId = await this.getValidRefreshTokenId(refreshToken);
+    if (!tokenId) throw new ForbiddenException();
+    const { userId, login } = await this.getPayload(
+      refreshToken,
+      JWT_SECRET_REFRESH_KEY,
+    );
+    return this.generateTokens(userId, login);
+  }
+}

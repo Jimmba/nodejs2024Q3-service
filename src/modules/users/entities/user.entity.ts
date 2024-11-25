@@ -1,5 +1,8 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+
 import { IUser } from '../interfaces';
+
+import { TokenEntity } from '../../auth/entities/auth.entity';
 
 @Entity('users')
 export class UserEntity implements IUser {
@@ -20,4 +23,7 @@ export class UserEntity implements IUser {
 
   @Column('bigint')
   updatedAt: number;
+
+  @OneToMany(() => TokenEntity, (token) => token.user)
+  tokens: TokenEntity[];
 }

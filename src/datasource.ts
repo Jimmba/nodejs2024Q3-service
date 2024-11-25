@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
+import { TokenEntity } from './modules/auth/entities';
 import { AlbumEntity } from './modules/album/entities';
 import { ArtistEntity } from './modules/artists/entities';
 import { TrackEntity } from './modules/track/entities';
@@ -13,6 +14,7 @@ import {
   Tracks1731946662738,
   Users1731944249813,
 } from '../migrations';
+import { Tokens1732205201220 } from 'migrations/1732205201220-tokens';
 
 config();
 
@@ -41,6 +43,7 @@ export const dataSourceOptions: DataSourceOptions = {
     AlbumEntity,
     ArtistEntity,
     FavoritesEntity,
+    TokenEntity,
     TrackEntity,
     UserEntity,
   ],
@@ -48,6 +51,7 @@ export const dataSourceOptions: DataSourceOptions = {
     Artists1731945444100,
     Albums1731946415573,
     Favorites1731946669293,
+    Tokens1732205201220,
     Tracks1731946662738,
     Users1731944249813,
   ],

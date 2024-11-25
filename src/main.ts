@@ -8,16 +8,32 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 
 import { AllExceptionsFilter } from './common/exceptions';
 import { AppModule } from './app.module';
+import { LoggingService } from './common/services';
 
 async function bootstrap() {
   config();
-  // throw new Error('oops');
 
   const port = parseInt(process.env.PORT) || 4001;
   const app = await NestFactory.create(AppModule);
+  const loggingService = app.get(LoggingService);
+
+  process.on('uncaughtException', (error) => {
+    loggingService.fatal(`Uncaught Exception: ${error.message}`);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    loggingService.fatal(
+      `Unhandled Rejection at: ${promise}, reason: ${reason}`,
+    );
+    process.exit(1);
+  });
 
   const httpAdapterHost = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
+  app.useGlobalFilters(
+    new AllExceptionsFilter(httpAdapterHost, loggingService),
+  );
+
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
 

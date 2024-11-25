@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import {
-  BadRequestException,
-  NotFoundException,
-} from '../../../common/exceptions';
+import { NotFoundException } from '../../../common/exceptions';
 
 import { CreateArtistDto } from '../dtos';
 import { IArtist } from '../interfaces';
