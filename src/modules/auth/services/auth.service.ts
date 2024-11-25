@@ -18,14 +18,11 @@ import { IJwtPayload, IToken, ITokens } from '../interfaces';
 config();
 
 const {
-  CRYPT_SALT,
   JWT_SECRET_KEY,
   JWT_SECRET_REFRESH_KEY,
   TOKEN_EXPIRE_TIME,
   TOKEN_REFRESH_EXPIRE_TIME,
 } = process.env;
-
-const cryptSalt = parseInt(CRYPT_SALT);
 
 @Injectable()
 export class AuthService {
@@ -113,19 +110,8 @@ export class AuthService {
     };
   }
 
-  private async hashString(value: string): Promise<string> {
-    const salt = await genSalt(cryptSalt);
-    return hash(value, salt);
-  }
-
   async signup(createUserDto: CreateUserDto): Promise<IUserResponse> {
-    const { password } = createUserDto;
-    const hashedPassword = await this.hashString(password);
-    const updatedDto = {
-      ...createUserDto,
-      password: hashedPassword,
-    };
-    return await this.userService.createUser(updatedDto);
+    return await this.userService.createUser(createUserDto);
   }
 
   async login(createUserDto: CreateUserDto): Promise<ITokens> {

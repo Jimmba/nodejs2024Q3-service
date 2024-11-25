@@ -1,6 +1,8 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { compare, genSalt, hash } from 'bcrypt';
+import { config } from 'dotenv';
 import { Repository } from 'typeorm';
 
 import {
@@ -12,6 +14,12 @@ import { generateUuid } from '../../../common/helpers';
 import { CreateUserDto, UpdatePasswordDto } from '../dtos';
 import { UserEntity } from '../entities';
 import { IUser, IUserResponse } from '../interfaces';
+
+config();
+
+const { CRYPT_SALT } = process.env;
+
+const cryptSalt = parseInt(CRYPT_SALT);
 
 const getNumber = (value: string | number): number => {
   return typeof value === 'number' ? value : parseInt(value);
@@ -52,16 +60,22 @@ export class UserService {
     return await this.userRepository.findOneBy({ login });
   }
 
+  private async hashString(value: string): Promise<string> {
+    const salt = await genSalt(cryptSalt);
+    return hash(value, salt);
+  }
+
   public async createUser(createUser: CreateUserDto): Promise<IUserResponse> {
     const { login, password } = createUser;
     const savedUser = await this.getUserByLogin(login);
     if (savedUser)
       throw new BadRequestException(`User '${login}' already exists`);
 
+    const hashedPassword = await this.hashString(password);
     const user: IUser = {
       id: generateUuid(),
       login,
-      password,
+      password: hashedPassword,
       version: 1,
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
@@ -75,12 +89,16 @@ export class UserService {
     id: string,
     body: UpdatePasswordDto,
   ): Promise<IUserResponse> {
-    const { password: savedPassword, version } = await this.getFullUserById(id);
+    const { password: savedHash, version } = await this.getFullUserById(id);
     const { oldPassword, newPassword } = body;
-    if (savedPassword !== oldPassword)
-      throw new ForbiddenException(`Wrong password`);
+
+    const isCorrectPassword = await compare(oldPassword, savedHash);
+    if (!isCorrectPassword) throw new ForbiddenException(`Wrong password`);
+
+    const hashedPassword = await this.hashString(newPassword);
+
     await this.userRepository.update(id, {
-      password: newPassword,
+      password: hashedPassword,
       version: version + 1,
       updatedAt: new Date().getTime(),
     });
