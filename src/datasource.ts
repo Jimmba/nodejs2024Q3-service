@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-import { TokenEntity } from './modules/auth/entities/auth.entity';
+import { TokenEntity } from './modules/auth/entities';
 import { AlbumEntity } from './modules/album/entities';
 import { ArtistEntity } from './modules/artists/entities';
 import { TrackEntity } from './modules/track/entities';

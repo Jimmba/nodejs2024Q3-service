@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 
-import { ArtistEntity } from '../../../modules/artists/entities';
 import { AlbumEntity } from '../../../modules/album/entities';
+import { ArtistEntity } from '../../../modules/artists/entities';
 import { FavoritesEntity } from '../../../modules/favorites/entities';
 
 import { ITrack } from '../interfaces';

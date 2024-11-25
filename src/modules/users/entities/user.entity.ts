@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+
 import { IUser } from '../interfaces';
 
 import { TokenEntity } from '../../auth/entities/auth.entity';
