@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { compare, genSalt, hash } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { config } from 'dotenv';
 import { sign, verify } from 'jsonwebtoken';
 import { Repository } from 'typeorm';

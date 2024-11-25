@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Param,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 
 import { TrackIdDto } from '../../../modules/track/dtos';

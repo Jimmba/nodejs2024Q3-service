@@ -8,7 +8,6 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 
 import { CreateTrackDto, TrackIdDto } from '../dtos';
